@@ -1,0 +1,64 @@
+/** ******************************************************** ***
+    ------------------------------------------------------------
+    OVERVIEW:
+    ------------------------------------------------------------
+    CREATION:
+        1. Load a full color PNG file into UTILITY.
+        2. Convert to BLACK & WHITE should be optional.
+        3. Re-save processed PNG file to DISK.
+        4. Open PNG file we just saved for
+           BINARY READ. (Do not open with)
+           ( lodePNG)
+        5. Create U32 hex code dump that can
+           be pasted into c99 code.
+        6. Save that hex dump to file.
+
+    VERIFY:
+        1. Load a hex dump .TXT file.
+        2. Covnert TXT to BYTES
+        3. Interpret bytes as PNG file.
+        4. Save PNG file to disk.
+*** ******************************************************** **/
+/** ******************************************************** ***
+    ------------------------------------------------------------
+    TERMS:
+    ------------------------------------------------------------
+
+    !IMPORTANT!
+            : When[ c99text ]is embedded into an EXE
+            : it becomes a[ c99pixa ].
+
+    pngfile : A pngfile in binary format as it appears
+              on the hard disk.
+
+    c99text : A text file that represents a hex dump
+              of a PNG file. The hex dump is written
+              as valid C99 source code for an 
+              initialized U32 array.
+              This array contains the same binary
+              information as[ pngfile ].
+
+    c99pixa : The actual binary data of c99text when
+              the executable source code has been
+              compiled. This is an array of U32, so
+              be careful about the endianness when
+              converting to[ pngpixa ].
+
+    pngpixa : Deflated[ pngfile ]into an u08 array.
+              Representing the un-compressed bitmap.
+
+    pngtext : NO SUCH THING. The pngfile is serialized as
+              a hex dump where each 4 bytes of the binary
+             [pngfile] is backed into a 32bit hexadecimal
+              string literal.
+
+//:Public to command line:
+
+    1. pngfile_CTO_c99text   CMD$>> PHEXDUM png-to-c99 fil.PNG
+    2. c99text_CTO_pngfile   CMD$>> PHEXDUM c99-to-png c99.TXT
+
+//:Public to AAC2020 engine:
+
+    1. c99pixa_CTO_pngpixa
+
+*** ******************************************************** **/

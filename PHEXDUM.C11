@@ -1,0 +1,14 @@
+
+//: PHEXDUM.C11 : Compile This File
+
+
+
+    /** lodev.org/lodepng/ **/
+    #include "./DEP/lodepng.h"       
+    #include "./DEP/lodepng.c"   
+
+    /** Our Library Files **/
+    #include "./PHEXDUM.D._"
+    #include "./PHEXDUM.F._"
+
+    
