@@ -1,2 +1,259 @@
 
 //: PHEXDUM.F._ :PNG_HEX_DUMP: Functions
+
+//:HALT_IS_TYPICALLY_THE_FIRST_FUNCTION:=====================://
+    void 
+    aac2020_phexdum_Halt( const char* msg_err )
+    {
+        printf("[FATAL_ERROR:aac2020_phexdum]:%s\n", msg_err );
+        fflush(stdout);
+        exit( 189 );
+    }
+//:=====================:HALT_IS_TYPICALLY_THE_FIRST_FUNCTION://
+//:LOG_AFTER_HALT:===========================================://
+
+    void
+    aac2020_phexdum_Info_any(
+        const char* str_fmt
+    ,   void*       dat_any   
+    )
+    { 
+        //: if( AAC2020_SILENCE.PHEXDUM <= 0 ){
+        if( 0 > 1 ){
+            /** Same Line As Next Printf **/
+            printf("[phexdum_log]....(   " ); fflush( stdout );
+            printf( str_fmt , dat_any      ); fflush( stdout );
+            printf(               "   )\n" ); fflush( stdout );
+        };;
+        //: };; 
+        
+    }
+
+//:===========================================:LOG_AFTER_HALT://
+//:PUBLIC_COMMAND_LINE_FUNCTIONS:============================://
+#define I32 int32_t   /** GCC: <stdint.h> .....**/    //: 01 ://
+#define N_S ((CHR*)0) /** NIL Character String **/    //: 02 ://
+#define RET return                                    //: 03 ://
+#define CMD PHEXDUM_CMDLINE_FUNCTION                  //: 04 ://
+#define ERR aac2020_phexdum_Halt                      //: 05 ://
+#define CHR const char                                //: 06 ://
+    //: - - - - - - - - - - - - ---- - - - - - - - - - - - - ://
+    extern CHR* AAC2020_PHEXDUM_CMD_pngfile_CTO_c99text( CHR* );
+    extern CHR* AAC2020_PHEXDUM_CMD_c99text_CTO_pngfile( CHR* );
+    extern CHR* AAC2020_PHEXDUM_CMD_pngfile_CTO_naktext( CHR* );
+    extern CHR* AAC2020_PHEXDUM_CMD_naktext_CTO_pngfile( CHR* );
+    extern CHR* AAC2020_PHEXDUM_CMD_NothingFound(        CHR* );
+    //: - - - - - - - - - - - - ---- - - - - - - - - - - - - ://
+    CHR*
+    AAC2020_PHEXDUM_CMD_pngfile_CTO_c99text( 
+    CHR*            rel_str_pngfile           
+    )
+    {   if( N_S ==  rel_str_pngfile ){
+            ERR(  "[rel_str_pngfile:___:NIL:001]");
+        };;
+
+        RET( "[AAC2020_PHEXDUM_CMD_pngfile_CTO_c99text]" );
+    }
+    //: - - - - - - - - - - - - ---- - - - - - - - - - - - - ://
+    CHR*
+    AAC2020_PHEXDUM_CMD_c99text_CTO_pngfile( 
+    CHR*            rel_str_c99text
+    )
+    {   if( N_S ==  rel_str_c99text ){
+            ERR(  "[rel_str_c99text:___:NIL:002]");
+        };;
+
+        RET( "[AAC2020_PHEXDUM_CMD_c99text_CTO_pngfile]" );
+    }
+    //: - - - - - - - - - - - - ---- - - - - - - - - - - - - ://
+    CHR*
+    AAC2020_PHEXDUM_CMD_pngfile_CTO_naktext( 
+    CHR*            rel_str_pngfile
+    )
+    {   if( N_S ==  rel_str_pngfile ){
+            ERR(  "[rel_str_pngfile:___:NIL:003]");
+        };;
+
+        RET( "[AAC2020_PHEXDUM_CMD_pngfile_CTO_naktext]" );
+    }
+    //: - - - - - - - - - - - - ---- - - - - - - - - - - - - ://
+    CHR*
+    AAC2020_PHEXDUM_CMD_naktext_CTO_pngfile( 
+    CHR*            rel_str_naktext
+    )
+    {   if( N_S ==  rel_str_naktext ){
+            ERR(  "[rel_str_naktext:___:NIL:004]");
+        };;
+
+        RET( "[AAC2020_PHEXDUM_CMD_naktext_CTO_pngfile]" );
+    }
+    //: - - - - - - - - - - - - ---- - - - - - - - - - - - - ://
+    CHR* 
+    AAC2020_PHEXDUM_CMD_NothingFound(
+    CHR*                nothingfound
+    ){
+        if( nothingfound ){ /** NOOP **/ };
+        RET( "[KANJICODER_SAYS:COMMAND_NOT_FOUND]" );
+    }
+#undef  I32  //:----------------------------------------: 01 ://
+#undef  N_S  //:----------------------------------------: 02 ://
+#undef  RET  //:----------------------------------------: 03 ://
+#undef  CMD  //:----------------------------------------: 04 ://
+#undef  ERR  //:----------------------------------------: 05 ://
+#undef  CHR  //:----------------------------------------: 06 ://
+//:============================:PUBLIC_COMMAND_LINE_FUNCTIONS://
+//:COMMAND_LINE_HELPER_FUNCTIONS:============================://
+#define I32  int32_t /** GCC: <stdint.h> **/          //: 01 ://
+#define I_P intmax_t /** GCC: <stdint.h> **/          //: 02 ://
+#define CHR const char                                //: 03 ://
+#define ENU cmdenum                                   //: 04 ://
+#define V_F PHEXDUM___ANY___FUNCTION                  //: 05 ://
+#define CMD PHEXDUM_CMDLINE_FUNCTION                  //: 06 ://
+#define ERR aac2020_phexdum_Halt                      //: 07 ://
+#define LOG aac2020_phexdum_Info_any                  //: 08 ://
+
+    //: - - - - - - - - - - - - ---- - - - - - - - - - - - - ://
+    V_F* /** returns integer or string **/
+    aac2020_phexdum_PRIVATE_cmdname_CTO_cmdenum_ORR_cmdfunc(
+               CHR* cmdname
+    ,          CHR* cmdenum_ORR_cmdfunc
+    )
+    {
+        LOG("[...cmdname_CTO_cmdenum_ORR_cmdfunc:BEG]",0);
+
+        //:declare_variables:--------------------------------://
+
+        I32   cmdenum =(      0   ); /** Command Enum     **/
+        CMD*  cmdfunc =&(AAC2020_PHEXDUM_CMD_NothingFound ) ;
+
+        CHR** syn_syn[ 5 ]={ 0 }; /** TAB:FUNCTION: Synonyms **/
+        I32   tab_enu[ 5 ]={ 0 }; /** TAB:FUNCTION: Enums    **/
+        CMD*  tab_fun[ 5 ]={ 0 }; /** TAB:FUNCTION: Funcs    **/
+        
+        CHR** tab_syn     =((CHR**)0);
+
+        I32   syn =(    0    ); /** Command Synonym Index **/
+
+        I32   chkenum ; /** CHECK:enumeration value **/
+
+        //:--------------------------------:declare_variables://
+        //:populate_tables:----------------------------------://
+
+        syn_syn[ 0 ]=(aac2020_phexdum_SYN_invalid_command     );
+        syn_syn[ 1 ]=(aac2020_phexdum_SYN_pngfile_CTO_c99text );
+        syn_syn[ 2 ]=(aac2020_phexdum_SYN_c99text_CTO_pngfile );
+        syn_syn[ 3 ]=(aac2020_phexdum_SYN_pngfile_CTO_naktext );
+        syn_syn[ 4 ]=(aac2020_phexdum_SYN_naktext_CTO_pngfile );
+
+        tab_enu[ 0 ]=( 0 ); /** 0 == invalid enum **/
+        tab_enu[ 1 ]=(aac2020_phexdum_ENU_pngfile_CTO_c99text );
+        tab_enu[ 2 ]=(aac2020_phexdum_ENU_c99text_CTO_pngfile );
+        tab_enu[ 3 ]=(aac2020_phexdum_ENU_pngfile_CTO_naktext );
+        tab_enu[ 4 ]=(aac2020_phexdum_ENU_naktext_CTO_pngfile );
+
+        tab_fun[ 0 ]=((CMD*)0);
+        tab_fun[ 1 ]=(AAC2020_PHEXDUM_CMD_pngfile_CTO_c99text );
+        tab_fun[ 2 ]=(AAC2020_PHEXDUM_CMD_c99text_CTO_pngfile );
+        tab_fun[ 3 ]=(AAC2020_PHEXDUM_CMD_pngfile_CTO_naktext );
+        tab_fun[ 4 ]=(AAC2020_PHEXDUM_CMD_naktext_CTO_pngfile );
+
+        if( 0 != tab_enu[ 0 ] ){ ERR("[ENU_MAP_ERR:000]"); };
+        if( 1 != tab_enu[ 1 ] ){ ERR("[ENU_MAP_ERR:001]"); };
+        if( 2 != tab_enu[ 2 ] ){ ERR("[ENU_MAP_ERR:002]"); };
+        if( 3 != tab_enu[ 3 ] ){ ERR("[ENU_MAP_ERR:003]"); };
+        if( 4 != tab_enu[ 4 ] ){ ERR("[ENU_MAP_ERR:004]"); };
+
+        //:----------------------------------:populate_tables://
+        //:find_the_command:---------------------------------://
+        for( I32 cmd = 4 ; cmd >= 0 ; cmd -- ){
+
+            /** ******************************************** **/
+            /** @VID_IID[0120]TIME[ 01:17:02 ] ************* **/
+            /** Too terse. Will be hard to understand in a   **/
+            /** few months. So add lots of checking code to  **/
+            /** verify understanding.                        **/
+            /** ******************************************** **/
+
+            tab_syn =( aac2020_phexdum_SYN_SYN[ cmd ] );
+
+            if( tab_syn != syn_syn[ cmd ] ){
+                ERR("[SYN_SYN_TABLE_MISMATCH]");
+            };;
+
+            /** ******************************************** **/
+
+            //:are_we_on_the_command_we_want:----------------://
+    
+                /** loop through command synonyms **/
+                for( syn = 0 ; syn <= (9-1) ; syn ++ ){
+
+                    if(0 ==strcmp( cmdname , tab_syn[ syn ] )){
+
+                        /** ******************************** **/
+                        /** @VID_IID[ 0120 ]TIME[ 01:42:42 ] **/
+                        /** Dont break here. We want to avoid**/
+                        /** different code execution paths...**/
+                        /** let loop run to the end..........**/
+                        /** ******************************** **/
+
+                        cmdenum =          cmd  ;
+                        cmdfunc = tab_fun[ cmd ];
+                        chkenum = tab_enu[ cmd ];
+
+                        if( cmdenum != chkenum ){
+                            ERR("[ENUMS_IMPROPERLY_MAPPED]");
+                        };;
+                    };;
+                };;
+
+            //:----------------:are_we_on_the_command_we_want://
+        };;
+        //:---------------------------------:find_the_command://
+
+        V_F* return_data=((V_F*)0);
+        if( 0 == strcmp( "cmdenum" , cmdenum_ORR_cmdfunc ) ){
+            return_data=(  (V_F*)((I_P)cmdenum)  );
+        }else
+        if( 0 == strcmp( "cmdfunc" , cmdenum_ORR_cmdfunc ) ){
+            return_data=(  (V_F*)cmdfunc );
+        }else{
+            ERR("[INVALID_RETURN_DATA_REQUESTED]");
+        };;
+
+        LOG("[...cmdname_CTO_cmdenum_ORR_cmdfunc:END]",0);
+        return( return_data );
+    }
+    //: - - - - - - - - - - - - ---- - - - - - - - - - - - - ://
+    I32
+    AAC2020_PHEXDUM_cmdname_CTO_cmdenum(
+    CHR*            cmdname
+    )
+    {
+        I32 cmdenum=(I32)((I_P)(
+        aac2020_phexdum_PRIVATE_cmdname_CTO_cmdenum_ORR_cmdfunc(
+                                cmdname  , "cmdenum" )));;
+        return( cmdenum );;
+    }
+    //: - - - - - - - - - - - - ---- - - - - - - - - - - - - ://
+    CMD*
+    AAC2020_PHEXDUM_cmdname_CTO_cmdfunc(
+    CHR*            cmdname
+    )
+    {   /** #_WHY_CMD_CMD_CAST_#             **/
+        /** @VID_IID[ 0120 ]TIME[ 04:56:23 ] **/
+
+        CMD* cmdfunc=(CMD*)((CMD*)(
+        aac2020_phexdum_PRIVATE_cmdname_CTO_cmdenum_ORR_cmdfunc(
+                                cmdname  , "cmdfunc" )));;
+        return( cmdfunc );
+    }
+    //: - - - - - - - - - - - - ---- - - - - - - - - - - - - ://
+#undef  I32  //:----------------------------------------: 01 ://
+#undef  I_P  //:----------------------------------------: 02 ://
+#undef  CHR  //:----------------------------------------: 03 ://
+#undef  ENU  //:----------------------------------------: 04 ://
+#undef  V_F  //:----------------------------------------: 05 ://
+#undef  CMD  //:----------------------------------------: 06 ://
+#undef  ERR  //:----------------------------------------: 07 ://
+#undef  LOG  //:----------------------------------------: 08 ://
+//:============================:COMMAND_LINE_HELPER_FUNCTIONS://

@@ -1,7 +1,11 @@
 
 //: PHEXDUM.C11 : Compile This File
 
-
+    /** AAC2020 library includes **/
+    #include <stdio.h>  //: printf(...)       ...............://
+    #include <stdlib.h> //: exit()            ...............://
+    #include <stdint.h> //: [u32,i32,u08,ETC] ...............://
+    #include <assert.h> //: define NDEBUG to turn off........://
 
     /** lodev.org/lodepng/ **/
     #include "./DEP/lodepng.h"       
@@ -11,4 +15,145 @@
     #include "./PHEXDUM.D._"
     #include "./PHEXDUM.F._"
 
+//:HALT_IS_TYPICALLY_THE_FIRST_FUNCTION:=====================://
+    void 
+    aac2020_phexdum_c11_file_Halt( const char* msg_err )
+    {
+        printf("[PHEXDUM_C11_FATAL_ERROR]:%s\n", msg_err );
+        fflush(stdout);
+        exit( 202 );
+    }
+//:=====================:HALT_IS_TYPICALLY_THE_FIRST_FUNCTION://
+//:LOG_AFTER_HALT:===========================================://
+#define P_F printf
+#define FLU fflush 
+
+    void
+    aac2020_phexdum_c11_Info_any(
+        const char* str_fmt
+    ,   void*       dat_any   
+    )
+    { 
+        if( 0 > 1 ){
+            /** Same Line As Next Printf **/
+            P_F("[phexdum_c11_log]....(   " ); FLU( stdout );
+            P_F( str_fmt , dat_any          ); FLU( stdout );
+            P_F(               "   )\n"     ); FLU( stdout );
+        };;
+    }
+
+#undef P_F
+#undef FLU
+//:===========================================:LOG_AFTER_HALT://
+//:MAIN_SECTION:=============================================://
+#define CHR const char                        //:-------: 01 ://
+#define I32 int32_t /** GCC: <stdint.h> **/   //:-------: 02 ://
+#define CMD PHEXDUM_CMDLINE_FUNCTION          //:-------: 03 ://
+#define ERR aac2020_phexdum_c11_file_Halt     //:-------: 04 ://
+#define LOG aac2020_phexdum_c11_Info_any      //:-------: 05 ://
+
+    I32 main(I32 arg_cou, char** arg_arr)
+    {
+        //:declare_vars:-------------------------------------://
+
+            /** Inputs And Outputs For Command Line **/
+
+            CHR* cmdname ; /** cmd: Command To Execute ......**/
+            CHR* fip_inn ; /** File Path Inn  ...............**/
+            CHR* fip_out ; /** File Path Out  ...............**/
+            CHR* tex_out ; /** Output text    ...............**/
+
+            /**  Sanitized Command Enumeration **/
+            /**  And corresponding jump table  **/
+
+            I32  cmdenum       =(   0   ); // <--CMD:ENUMERATION 
+            CMD* cmdjump[ 4+1 ]={   0   }; // <--CMD:JUMP_TABLE 
+            CMD* cmdfunc       =((CMD*)0); // <--CMD:FUNCTION 
+            
+        //:-------------------------------------:declare_vars://
+
+        if( 0
+        ||  2 == (arg_cou - 1) /** 2 user arguments **/
+        ||  3 == (arg_cou - 1) /** 3 user arguments **/
+        ){  
+
+            cmdname =( arg_arr[ 1 ] ); /** command      **/
+            fip_inn =( arg_arr[ 2 ] ); /** FIlePath:INN **/
+            fip_out =((CHR*)0);        /** FIlePath:OUT **/
+
+            if( ( arg_cou - 1 ) >= 3 ){
+                fip_out =( arg_arr[ 3 ] );
+            };;
+
+            //:call_function_from_jump_table:================://
+            #define JMP cmdjump
+
+            LOG("[ABOUT_TO_CALL:::::::cmdname_CTO_cmdenum]",0);
+            cmdenum=( AAC2020_PHEXDUM_cmdname_CTO_cmdenum(
+                                      cmdname ));;
+            LOG("[ABOUT_TO_CALL:::::::cmdname_CTO_cmdfunc]",0);
+            cmdfunc=( AAC2020_PHEXDUM_cmdname_CTO_cmdfunc(
+                                      cmdname ));;
+
+            LOG("[ABOUT_TO_POPULATE_JUMP_TABLE]",0);
+            assert( cmdenum >= 1 && cmdenum <= 4 );
+            JMP[ 0 ]=((CMD*)0); /** No function slot 0 **/
+            JMP[ 1 ]=(AAC2020_PHEXDUM_CMD_pngfile_CTO_c99text );
+            JMP[ 2 ]=(AAC2020_PHEXDUM_CMD_c99text_CTO_pngfile );
+            JMP[ 3 ]=(AAC2020_PHEXDUM_CMD_pngfile_CTO_naktext );
+            JMP[ 4 ]=(AAC2020_PHEXDUM_CMD_naktext_CTO_pngfile );
+      
+            /** Execute proper function **/
+            
+            if( 1
+            &&  cmdenum >= 1 
+            &&  cmdenum <= 4 
+            ){
+                if( ((CMD*)0)==cmdfunc ){
+
+                    tex_out =("[ERR:NULL_CMDFUNC_POINTER]");
+
+                }else{
+                    
+                    LOG("[ABOUT_TO_ASSERT_JMP_cmdenum]",0);
+                    assert(       JMP[ cmdenum ] == cmdfunc );
+
+                    LOG("[ABOUT_TO_CALL_JMMP_cmdenum]",0);
+                    tex_out = ( ( JMP[ cmdenum ] )( fip_inn ) );
+                };;
+
+            };;
+
+            #undef  JMP
+            //:================:call_function_from_jump_table://
+
+        }else{
+            CHR* error_output_text_message=(
+                "[KANJI_CODER_SAYS:USE_EXACTLY_2_USER_ARGS]\n"
+            );;
+            printf(     error_output_text_message );
+            tex_out = ( error_output_text_message );
+        };;
+
+        //:save_text_to_output_file:=========================://
+
+            if( ((CHR*)0) == tex_out ){
+                ERR("[NULL_OUTPUT_TEXT_SHOULD_NEVER_HAPPEN]");
+            }else{
+
+                if( fip_out ){ /** NOOP **/ };
+
+                printf( tex_out );
+                //: TODO FIGURE THIS OUT <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< TODO
+
+            };;
+
+        //:=========================:save_text_to_output_file://
+    }
     
+#undef  CHR  //:----------------------------------------: 01 ://
+#undef  I32  //:----------------------------------------: 02 ://
+#undef  CMD  //:----------------------------------------: 03 ://
+#undef  ERR  //:----------------------------------------: 04 ://
+#undef  LOG  //:----------------------------------------: 05 ://
+//:=============================================:MAIN_SECTION://

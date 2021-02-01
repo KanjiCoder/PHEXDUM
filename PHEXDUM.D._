@@ -38,6 +38,12 @@
               This array contains the same binary
               information as[ pngfile ].
 
+    naktext : Naked[ c99text ]
+              Just the comma seperated list of U32 hex codes
+              found in c99text. This exists so we can create
+              a built system similiar to our C99-to-GLSL
+              build system.
+
     c99pixa : The actual binary data of c99text when
               the executable source code has been
               compiled. This is an array of U32, so
@@ -57,8 +63,146 @@
     1. pngfile_CTO_c99text   CMD$>> PHEXDUM png-to-c99 fil.PNG
     2. c99text_CTO_pngfile   CMD$>> PHEXDUM c99-to-png c99.TXT
 
+    3. pngfile_CTO_naktext   CMD$>> PHEXDUM png-to-nak fil.PNG
+    4. naktext_CTO_pngfile   CMD$>> PHEXDUM nak-to-png c99.TXT
+
 //:Public to AAC2020 engine:
 
-    1. c99pixa_CTO_pngpixa
+    1. c99pixa_CTO_pngpixa  (U32 array -to- U08 array)
+       ( BE CAREFUL OF ENDIANNESS )
 
 *** ******************************************************** **/
+
+//:FUNCTION_POINTER_TYPES:===================================://
+#define CHR const char
+
+    typedef CHR* (PHEXDUM_CMDLINE_FUNCTION)( CHR* rel_str );
+
+    /** void FUNCTION pointer **/
+    typedef void (PHEXDUM___ANY___FUNCTION)(void);
+
+#undef  CHR
+//:===================================:FUNCTION_POINTER_TYPES://
+//:COMMAND_JUMP_TABLE:=======================================://
+
+    //[ NOT ALLOWED! DATA CANNOT REFERENCE    ]//
+    //[ FUNCTIONS IN OUR CODE BASE DESIGN !!! ]//
+
+//:=======================================:COMMAND_JUMP_TABLE://
+//:NOT_FUNCTION_POINTERS:====================================://
+#define CMD PHEXDUM_CMDLINE_FUNCTION
+#define CHR const char
+
+    extern CHR* AAC2020_PHEXDUM_CMD_pngfile_CTO_c99text( CHR* );
+    extern CHR* AAC2020_PHEXDUM_CMD_c99text_CTO_pngfile( CHR* );
+    extern CHR* AAC2020_PHEXDUM_CMD_pngfile_CTO_naktext( CHR* );
+    extern CHR* AAC2020_PHEXDUM_CMD_naktext_CTO_pngfile( CHR* );
+
+    extern CHR* AAC2020_PHEXDUM_CMD_NothingFound(        CHR* );
+
+#undef  CMD
+#undef  CHR
+//:====================================:NOT_FUNCTION_POINTERS://
+//:COMMAND_ENUMERATIONS:=====================================://
+#define I32 int32_t /** GCC: <stdint.h> **/
+
+    I32 aac2020_phexdum_ENU_pngfile_CTO_c99text =( 1 );
+    I32 aac2020_phexdum_ENU_c99text_CTO_pngfile =( 2 );
+    I32 aac2020_phexdum_ENU_pngfile_CTO_naktext =( 3 );
+    I32 aac2020_phexdum_ENU_naktext_CTO_pngfile =( 4 );
+
+#undef  I32
+//:=====================================:COMMAND_ENUMERATIONS://
+//:COMMAND_NORMALIZATION_TABLE:==============================://
+//:SYN____FOR____SYNONYM_TABLE:==============================://
+#define CHR const char
+
+    //: - - - - - - - - - - - - ---- - - - - - - - - - - - - ://
+    //: CHR**  type(s):--------------------------------------://
+    extern CHR*  aac2020_phexdum_SYN_pngfile_CTO_c99text[ 9 ] ;
+    extern CHR*  aac2020_phexdum_SYN_c99text_CTO_pngfile[ 9 ] ;
+    extern CHR*  aac2020_phexdum_SYN_pngfile_CTO_naktext[ 9 ] ;
+    extern CHR*  aac2020_phexdum_SYN_naktext_CTO_pngfile[ 9 ] ;
+
+    //: CHR*** type(s): -------------------------------------://
+    extern CHR** aac2020_phexdum_SYN_SYN[ 5 ];
+    //: - - - - - - - - - - - - ---- - - - - - - - - - - - - ://
+    CHR*            /** invalid_command **/
+    aac2020_phexdum_SYN_invalid_command[ 9 ]={
+    /**/"[AAC2020_ENGINE_BY_KANJICODER:INVALID_COMMAND_000]"
+    ,   "[AAC2020_ENGINE_BY_KANJICODER:INVALID_COMMAND_001]"
+    ,   "[AAC2020_ENGINE_BY_KANJICODER:INVALID_COMMAND_002]"
+    ,   "[AAC2020_ENGINE_BY_KANJICODER:INVALID_COMMAND_003]"
+    ,   "[AAC2020_ENGINE_BY_KANJICODER:INVALID_COMMAND_004]"
+    ,   "[AAC2020_ENGINE_BY_KANJICODER:INVALID_COMMAND_005]"
+    ,   "[AAC2020_ENGINE_BY_KANJICODER:INVALID_COMMAND_006]"
+    ,   "[AAC2020_ENGINE_BY_KANJICODER:INVALID_COMMAND_007]"
+    ,   "[AAC2020_ENGINE_BY_KANJICODER:INVALID_COMMAND_008]"
+    };
+    //: - - - - - - - - - - - - ---- - - - - - - - - - - - - ://
+    CHR*            /** pngfile_CTO_c99text **/
+    aac2020_phexdum_SYN_pngfile_CTO_c99text[ 9 ]={
+    /**/"copyright_2021_atomic_alice_c_engine(AAC2020):001"
+    ,   "png-to-c99"  
+    ,   "png_to_c99" 
+    ,   "png-TO-c99"  
+    ,   "png_TO_c99" 
+    ,   "pngfile-cto-c99text"
+    ,   "pngfile_cto_c99text"
+    ,   "pngfile-CTO-c99text"
+    ,   "pngfile_CTO_c99text"
+    };
+    //: - - - - - - - - - - - - ---- - - - - - - - - - - - - ://
+    CHR*            /** c99text_CTO_pngfile **/
+    aac2020_phexdum_SYN_c99text_CTO_pngfile[ 9 ]={
+    /**/"copyright_2021_atomic_alice_c_engine(AAC2020):002"
+    ,   "c99-to-png"  
+    ,   "c99_to_png" 
+    ,   "c99-TO-png"  
+    ,   "c99_TO_png" 
+    ,   "c99text-cto-pngfile"
+    ,   "c99text_cto_pngfile"
+    ,   "c99text-CTO-pngfile"
+    ,   "c99text_CTO_pngfile"
+    };
+    //: - - - - - - - - - - - - ---- - - - - - - - - - - - - ://
+    CHR*            /** pngfile_CTO_naktext **/
+    aac2020_phexdum_SYN_pngfile_CTO_naktext[ 9 ]={
+    /**/"copyright_2021_atomic_alice_c_engine(AAC2020):003"
+    ,   "png-to-nak"  
+    ,   "png_to_nak" 
+    ,   "png-TO-nak"  
+    ,   "png_TO_nak" 
+    ,   "pngfile-cto-naktext"
+    ,   "pngfile_cto_naktext"
+    ,   "pngfile-CTO-naktext"
+    ,   "pngfile_CTO_naktext"
+    };
+    //: - - - - - - - - - - - - ---- - - - - - - - - - - - - ://
+    CHR*            /** naktext_CTO_pngfile **/
+    aac2020_phexdum_SYN_naktext_CTO_pngfile[ 9 ]={
+    /**/"copyright_2021_atomic_alice_c_engine(AAC2020):004"
+    ,   "nak-to-png"  
+    ,   "nak_to_png" 
+    ,   "nak-TO-png"  
+    ,   "nak_TO_png" 
+    ,   "naktext-cto-pngfile"
+    ,   "naktext_cto_pngfile"
+    ,   "naktext-CTO-pngfile"
+    ,   "naktext_CTO_pngfile"
+    };
+    //: - - - - - - - - - - - - ---- - - - - - - - - - - - - ://
+    CHR**
+    aac2020_phexdum_SYN_SYN[ 4 + 1 ]={
+    /**/( aac2020_phexdum_SYN_invalid_command )
+
+    ,   ( aac2020_phexdum_SYN_pngfile_CTO_c99text )
+    ,   ( aac2020_phexdum_SYN_c99text_CTO_pngfile )
+    ,   ( aac2020_phexdum_SYN_pngfile_CTO_naktext )
+    ,   ( aac2020_phexdum_SYN_naktext_CTO_pngfile )
+    };
+    //: - - - - - - - - - - - - ---- - - - - - - - - - - - - ://
+
+#undef  CHR
+//:==============================:SYN____FOR____SYNONYM_TABLE://
+//:==============================:COMMAND_NORMALIZATION_TABLE://
