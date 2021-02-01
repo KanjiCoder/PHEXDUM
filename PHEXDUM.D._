@@ -72,7 +72,18 @@
        ( BE CAREFUL OF ENDIANNESS )
 
 *** ******************************************************** **/
+//:MISC_WHATEVER:============================================://
+#define CHR const char
 
+    CHR* AAC2020_PHEXDUM_DEFAULT_fip_out =( 
+        "PNG_ORR_TXT.___\0" );
+
+    CHR* AAC2020_PHEXDUM_DEFAULT_tex_out =( 
+       "[AAC2020_PHEXDUM_DEFAULT_tex_out]\n\0" );
+                                          
+
+#undef  CHR
+//:============================================:MISC_WHATEVER://
 //:FUNCTION_POINTER_TYPES:===================================://
 #define CHR const char
 

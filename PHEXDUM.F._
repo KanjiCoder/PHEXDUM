@@ -11,25 +11,606 @@
     }
 //:=====================:HALT_IS_TYPICALLY_THE_FIRST_FUNCTION://
 //:LOG_AFTER_HALT:===========================================://
+#define I32 int32_t /** GCC: <stdint.h> **/           //: 01 ://
+#define CHR const char                                //: 02 ://
+#define ERR aac2020_phexdum_Halt                      //: 03 ://
 
     void
     aac2020_phexdum_Info_any(
-        const char* str_fmt
-    ,   void*       dat_any   
+        CHR*  str_fmt
+    ,   void* dat_any   
     )
     { 
-        //: if( AAC2020_SILENCE.PHEXDUM <= 0 ){
-        if( 0 > 1 ){
+
+        I32 logging_is_on=( 0 - 1234 /**INVALID_VALUE**/ );
+        
+        #ifdef AAC2020_INCLUDE_SILENCE
+        /** Compiled as part of main AAC2020 engine. **/
+            
+            if( AAC2020_SILENCE.PHEXDUM <= 0 ){
+                logging_is_on=( 1 );
+            }else
+            if( AAC2020_SILENCE.PHEXDUM >= 1 ){
+                logging_is_on=( 0 );
+            }else{
+                ERR("[WTF_ARE_YOU_DOING?]");
+            };;
+
+        #else
+        /** Compiled as stand-alone command line utility. **/
+
+            logging_is_on =( 
+                AAC2020_PHEXDUM_STAND_ALONE_ONLY_LOGGING_ON );;
+
+        #endif
+
+        //: 
+        if( logging_is_on >= 1 ){
             /** Same Line As Next Printf **/
             printf("[phexdum_log]....(   " ); fflush( stdout );
             printf( str_fmt , dat_any      ); fflush( stdout );
             printf(               "   )\n" ); fflush( stdout );
+        }else
+        if( 0 == logging_is_on ){
+            /** do nothing **/
+        }else{
+            ERR("[YOUR_LOGGING_CONFIG_LOGIC_SUCKS_2021]");
         };;
-        //: };; 
         
     }
 
+#undef  I32  //:----------------------------------------: 01 ://
+#undef  CHR  //:----------------------------------------: 02 ://
+#undef  ERR  //:----------------------------------------: 03 ://
 //:===========================================:LOG_AFTER_HALT://
+//:INFO_PRINT_STRING:========================================://
+#define CHR const char
+#define ERR aac2020_phexdum_Halt
+
+    /** ****************************************** **/
+    /** I'd like to get rid of this function. But  **/
+    /** right now just get things working.         **/
+    /** @VID_IID[ 0121 ]TIME[ 01:12:55 ] ********* **/
+    /** ****************************************** **/
+
+    void
+    aac2020_phexdum_Info_str( 
+        CHR* msg_fmt /** Format String **/
+    ,   CHR* msg_inf /** Information String **/
+    )
+    {
+        if( ((CHR*)0) == msg_fmt ){ ERR("[NIL:msg_fmt]"); };
+        if( ((CHR*)0) == msg_inf ){ ERR("[NIL:msg_inf]"); };
+        
+        aac2020_phexdum_Info_any(
+                   msg_fmt
+        ,   (void*)msg_inf
+        );;
+    }
+
+#undef  CHR
+#undef  ERR
+//:========================================:INFO_PRINT_STRING://
+//:==========================================================://
+//:FILE_READ_WRITE_SECTION:||||||||||||||||||||||||||||||||||://
+//:==========================================================://
+#define I_S aac2020_phexdum_Info_str
+
+    //:PRIVATE:RECURIVE_MAKE_DIRECTORY:======================://
+
+        int
+        aac2020_phexdum_MakeOneDirectory(
+            const char* name
+        )
+        {
+            int mkdir_status_zero_is_success=( 23 );
+
+            #ifdef __linux__
+                mkdir_status_zero_is_success =  mkdir(name, 0777);  
+            #else
+                mkdir_status_zero_is_success =  mkdir(name);
+            #endif
+
+            return( mkdir_status_zero_is_success );
+        }
+
+        //: - - - - - - - - - - - - ---- - - - - - - - - - - - - ://
+
+        void aac2020_phexdum_mkdir(char* path) 
+        {
+            if( ((char*)0) != strrchr(path, '\\' ) ){
+                aac2020_phexdum_Halt("BACK_SLASHES_NOT_SUPPORTED]");
+            };;
+
+            char *sep = strrchr(path, '/');
+            if( ((char*)0) != sep ){
+
+                *sep = 0;
+                aac2020_phexdum_mkdir(path);
+                *sep = '/';
+            };;
+
+            if(
+                aac2020_phexdum_MakeOneDirectory(path) 
+            && 
+                errno != EEXIST
+            ){
+                //: if( AAC2020_SILENCE.PHEXDUM <= 0 ){
+
+                    /** REVISIT[ DATE[ 2020_12_09 ] ] ********** **/
+                    /** Is this an error? Why the fuck did I     **/
+                    /** Write this? I have no clue what this     **/
+                    /** should mean? Is it info or actually      **/
+                    /** an error that should fail fast?          **/
+                    I_S("[FUCKING_FILES_MAN]:(((%s)))\n", path); 
+
+                //: };;
+            };;
+        }
+
+    //:======================:PRIVATE:RECURIVE_MAKE_DIRECTORY://
+    //:TOUCH_FILE:===========================================://
+    #define U32 uint32_t /** GCC: <stdint.h> **/
+    #define SMF aac2020_phexdum_Halt /** SMF:SupriseMotherFucker **/
+    #define MACRO_MAX_LEN ( 256 )
+    #define LOG aac2020_phexdum_Info_any
+    #define ERR aac2020_phexdum_Halt
+    #define CHR const char
+
+        U32
+        AAC2020_PHEXDUM_TouchFile(
+            const char* file_name /** EX:frag_shader_nam **/
+        )
+        {
+            LOG("[AAC2020_PHEXDUM_TouchFile:BEG]",0);
+            if( ((CHR*)0) == file_name ){
+                ERR("[AAC2020_PHEXDUM_TouchFile:NIL_FILE]");
+            };;
+            I_S("[PHEXDUM_TouchFile]:%s\n" , file_name );;  
+
+            //:GET_STR_LEN_AND_VALIDATE:---------------------://
+            #define NILIDEX ( 1 ) /** 1 null terminator **/
+
+                int str_len = strlen( file_name );
+                if( str_len > ( MACRO_MAX_LEN - NILIDEX ) ){
+
+                    /** Must be short enough to accomidate     **/
+                    /** Length of string plus null terminator. **/
+                    aac2020_phexdum_Halt("[TOO_LONG]");
+
+                };;
+            
+            #undef  NILIDEX  /** 1 null terminator **/
+            //:---------------------:GET_STR_LEN_AND_VALIDATE://
+            //:EXPECT_EXACTLY_ONE_DOT:-----------------------://
+            //:DO_NOT_ALLOW_BACKSLASH:-----------------------://
+
+                /** These constraints will make it easier to     **/
+                /** implement your code. * * * * * * * * * * * * **/
+
+                int nos = ( 0 ); /** nos: Number_Of_back_Slashes **/
+                int nod = ( 0 ); /** nod: Number_Of_Dots **/
+                for( int i = 0; i < str_len; i++ ){
+
+                    if( file_name[i] == '.'  ){ nod++; };
+                    if( file_name[i] == '\\' ){ nos++; };
+
+                };;
+
+                if( nod >   1  ){ SMF("[TOO_MANY_DOTS]"); }else
+                if( nod <=  0  ){ SMF("[ZERO_____DOTS]"); }else
+                if(  1  == nod ){ /** OKAY. NOOP **/    }else
+                {
+                    SMF("[WTF:EDCL]");//:ExpectedDeadCodeLine
+                };; 
+
+                if( nos != 0 ){ SMF("[UNDOCUMENTED_BACKSLASHES]");};
+
+            //:-----------------------:DO_NOT_ALLOW_BACKSLASH://
+            //:-----------------------:EXPECT_EXACTLY_ONE_DOT://
+            //:CREATE_DIRECTORY:-----------------------------://
+
+                //:PATH_ONLY_SUB_STRING:- - - - - - - - - - - - -://
+
+                    //:FIND__LAST_SLASH:. . . . . . . . . . . . .://
+
+                        int dex_last_slash =( 0 - 1 );
+                        for( int i = 0; i < str_len; i++ ){
+                            if( '/' == file_name[ i ]  ){
+                                dex_last_slash =( i );
+                            };;
+                        };;
+
+                    //:. . . . . . . . . . . . .:FIND__LAST_SLASH://
+                    //:TAKE_TO_LAST_SLASH:. . . . . . . . . . . .://
+
+                        /** dir_sus : DIRectory_SUb_String **/
+                        char dir_sus[ MACRO_MAX_LEN ] = {0};
+                        for( int i = 0; i < dex_last_slash; i++ ){
+
+                            if( '.' != file_name[ i ]  ){
+
+                                dir_sus[ i ] = file_name[ i ];
+
+                            }else{
+                                //:DNE:Did_Not_Expect
+                                //:DBL:Dot_Before_Lastslash
+                                aac2020_phexdum_Halt("[DNE_DBL]");
+                            };;
+
+                        };;
+
+                    //:. . . . . . . . . . . .:TAKE_TO_LAST_SLASH://
+
+                //:- - - - - - - - - - - - -:PATH_ONLY_SUB_STRING://
+                //:RECURSIVE_MAKE_DIR:- - - - - - - - - - - - - -://
+     
+                    if( dex_last_slash <= 0 ){
+                            
+                        /** Creation of directory requires at  * **/
+                        /** least ONE character BEFORE the     * **/
+                        /** last slash.                        * **/
+                        /** Example/Reason: f/t.x              * **/
+
+                    }else
+                    if( dex_last_slash  < 1 ){
+
+                        /** ECATOH: ExpectedCaseAboveTOHandle  * **/
+                        /** "<1" is the same as "<=0"          * **/
+                        aac2020_phexdum_Halt("[ECATOH]");
+
+                    }else{
+
+                        //:RECURSIVE_MAKE_DIR:4REAL:. . . . . . .://
+
+                            I_S("[MAKING_DIRECTORY:dir_sus]:%s\n"
+                                                  ,dir_sus);;
+
+                            /** dir_sus : DIRectory_SUb_String **/
+                            aac2020_phexdum_mkdir( dir_sus );
+
+                        //:. . . . . . .:RECURSIVE_MAKE_DIR:4REAL://
+
+                    };;
+
+                //:- - - - - - - - - - - - - -:RECURSIVE_MAKE_DIR://
+
+            //:---------------------------------:CREATE_DIRECTORY://
+            //:CREATE_FILE_IF_NOT_EXIST:-------------------------://
+
+                /** Open For: APPEND/BINARY/UPDATE (a/b/+)   * * **/
+                /** Using wrong open can DELETE FILE CONTENTS  * **/
+                /** Which is not what we want. We want a touch.  **/
+                FILE*   file_han = fopen( file_name , "ab+" );
+                fclose( file_han );
+
+            //:-------------------------:CREATE_FILE_IF_NOT_EXIST://
+
+            LOG("[AAC2020_PHEXDUM_TouchFile:END]",0);
+            return( 0x00 );
+        }
+
+    #undef  MACRO_MAX_LEN
+    #undef  SMF /** www.youtube.com/watch?v=_bSEfx6D8mA **/
+    #undef  U32
+    #undef  LOG
+    #undef  ERR
+    #undef  CHR
+    //:===========================================:TOUCH_FILE://
+    //:SAVE_TXT_FILE_TO_DISK:================================://
+    //:SAVE_C99_FILE_TO_DISK:================================://
+    #define I32  int32_t /** GCC: <stdint.h> **/      //: 01 ://
+    #define U32 uint32_t /** GCC: <stdint.h> **/      //: 02 ://
+    #define CHR const char                            //: 03 ://
+    #define LOG aac2020_phexdum_Info_any              //: 04 ://
+    #define ERR aac2020_phexdum_Halt                  //: 05 ://
+
+        I32
+        AAC2020_PHEXDUM_SaveFile_TXT(
+            CHR* nof_wex /** NameOfFile__WithEXtension   ....**/
+        ,   CHR* chr_arr /** String To Save To Disk .........**/
+        ,   U32  str_len /** Num Chars In chr_arr   .........**/
+        )
+        {
+        /** ************************************************ ***
+        @VID_IID[ 0120 ]TIME[ 07:44:05 ]
+        Decided on[ AAC2020_PHEXDUM_SaveFile_TXT ]
+        Instead of[ AAC2020_PHEXDUM_SaveFile_TEX ]
+        Because "TEX" can mean "Texture" in some contexts.
+        *** ************************************************ **/
+            LOG("[AAC2020_PHEXDUM_SaveFile_TXT:BEG]",0);
+            //:input_checks:---------------------------------://
+            #define N_S ((CHR*)0)
+
+                /** @VID_IID[ 0121 ]TIME[ 00:31:00 ] **/
+                /** ZON: Zero_Or_Negative.           **/
+                if( N_S == nof_wex ){ ERR("[NIL:nof_wex]"); };
+                if( N_S == chr_arr ){ ERR("[NIL:chr_arr]"); };
+                if(  0  >= str_len ){ ERR("[ZON:str_len]"); };
+
+            #undef  N_S
+            //:---------------------------------:input_checks://
+            //:declare_variables:----------------------------://
+
+                FILE* fil_han =((FILE*)0 );
+                I32   fil_nob =( 0 - 747 );
+
+            //:----------------------------:declare_variables://
+
+            /** EXAMPLE:    TouchFile( "myTextFile.txt" );   **/
+            AAC2020_PHEXDUM_TouchFile( nof_wex );
+
+            /** ******************************************** ***
+            @VID_IID[ 0120 ]TIME[ 09:16:20 ] ( "w+" )
+            @VID_IID[ 0120 ]TIME[ 09:33:12 ] ( "w"  )
+            @VID_IID[ 0121 ]TIME[ 00:37:42 ] ( rbsrbs says )
+            https://linux.die.net/man/3/fdopen
+
+                rbsrbs: that will always be 0 
+                        if you open in mode "w"
+
+                rbsrbs: in linux b is ignored but 
+                        always good to be explicit
+            *** ******************************************** **/
+
+            /** Create if not exist. Truncate to zero. **/
+            fil_han = fopen( nof_wex , "wb" );
+
+            //:get_number_of_bytes_in_file:------------------://
+            /** SEEK_SET : GCC: unistd.h && mmsystem.h **/
+            /** SEEK_END : GCC: unistd.h && mmsystem.h **/
+            #define MACRO_SEEK_SET 0  
+            #define MACRO_SEEK_END 2  
+
+                //:Seek to end and get number of bytes.
+                //:Then reset file handle to start of file.
+                fseek( fil_han , 0 , MACRO_SEEK_END );
+                fil_nob = ftell( fil_han ); 
+                fseek( fil_han , 0 , MACRO_SEEK_SET );
+
+            #undef  MACRO_SEEK_SET
+            #undef  MACRO_SEEK_END
+            //:------------------:get_number_of_bytes_in_file://
+            //:make_sure_number_of_bytes_is_zero:------------://
+
+                if( 0  > fil_nob ){
+
+                    printf("[fil_nob]:%d\n" , fil_nob );
+                    ERR("[NEGATIVE_NUMBER_OF_BYTES_IN_FILE]");
+
+                }else
+                if( 0 != fil_nob ){
+
+                    printf("[fil_nob]:%d\n" , fil_nob );
+                    ERR("[EXPECTED_TRUNCATED_TO_ZERO_FILE]");
+
+                };;
+
+            //:------------:make_sure_number_of_bytes_is_zero://
+            //:write_text_using_binary_write:----------------://
+            #define MACRO_SEEK_SET 0  /**unistd.h, mmsystem.h**/
+
+                if( ((void*)0) != fil_han ){
+                
+                    fseek( fil_han , 0 , MACRO_SEEK_SET );
+                    fwrite( 
+                        chr_arr
+                    ,   1   //:[ ASCII_CHAR == 1 byte ]://
+                
+                            
+                    ,   str_len //:Number_Of_Characters
+                                //:NOT[ str_nob ]because strings  
+                                //:not null term in text files .
+                
+                    ,   fil_han //:File We are writing into.
+                    );;
+                    fclose( fil_han );
+                
+                }else{
+                    /** IDKWID: I_Dont_Know_What_Iam_Doing **/
+                    printf("[SAVE_FAIL:nof_wex]:%s\n",nof_wex);
+                    ERR("[FAIL_TO_SAVE_TEXT_FILE:WHY:IDKWID]");
+                };;
+
+            #undef  MACRO_SEEK_SET
+            //:----------------:write_text_using_binary_write://
+
+            LOG("[AAC2020_PHEXDUM_SaveFile_TXT:END]",0);
+            return( 0x00 );
+        }
+            
+    #undef  I32  //:------------------------------------: 01 ://
+    #undef  U32  //:------------------------------------: 02 ://
+    #undef  CHR  //:------------------------------------: 03 ://
+    #undef  LOG  //:------------------------------------: 04 ://
+    #undef  ERR  //:------------------------------------: 05 ://
+    //:================================:SAVE_C99_FILE_TO_DISK://
+    //:================================:SAVE_TXT_FILE_TO_DISK://
+    //:SAVE_PNG_FILE_TO_DISK:================================://
+    #define U08    uint8_t /** GCC: <stdint.h> **/    //: 01 ://
+    #define U32   uint32_t /** GCC: <stdint.h> **/    //: 02 ://
+    #define I32    int32_t /** GCC: <stdint.h> **/    //: 03 ://
+    #define CHR const char                            //: 04 ://
+    #define TXT       char                            //: 05 ://
+    #define ERR aac2020_phexdum_Halt                  //: 06 ://
+
+        int
+        AAC2020_PHEXDUM_SaveFile_PNG(
+            CHR* nof_wex /** NameOfFile__WithEXtension       ....**/
+        ,   U08* pix_arr /** PIXel ARRay in RGBA byte format ....**/
+        ,   U32  pix_wid /** Width  in pixels of pix_arr     ....**/
+        ,   U32  pix_hig /** Height in pixels of pix_arr     ....**/
+        )
+        {
+            /** @VID_IID[ 0095 ]TIME[ 01:32:50 ] *************** **/
+            /** This function was made by copying and pasting    **/
+            /** R:\G\AAC2020\LIB\MAIN\AAC2020_TestSaveFile_PNG._ **/
+            /** and refactoring it to be more general use.       **/
+            /** ************************************************ **/
+
+            //:error_check_inputs:-------------------------------://
+
+                if( ((CHR*)0) == nof_wex ){ 
+                    ERR("[KANJICODER_SAYS:NIL_STR_nof_wex_2021]");
+                };;
+
+                if( ((U08*)0) == pix_arr ){ 
+                    ERR("[KANJICODER_SAYS:NIL_ARR_pix_arr:2021]");
+                };;
+                if( 0 == pix_wid || 0 == pix_hig ){
+                    ERR("[INVALID_PNG_SIZE]");
+                };;
+
+                /** ".PNG" is 4 characters. Thus file name **/
+                /** should be MORE than 4 characters.      **/
+                if( strlen( nof_wex ) <= 4 ){
+                    ERR("[NO_POSSIBLE_WAY_NAME_IS_VALID_2021]");
+                };;
+
+                if(   '/' == nof_wex[ 0 ] //:FORWARDSLASH___CHAR
+                ||   '\\' == nof_wex[ 0 ] //:BACKSLASH_CHARACTER
+                ){
+                    ERR("[DO_NOT_PUT_SLASH_BEFORE_BASE_FOLDER]");
+                };;
+
+            //:-------------------------------:error_check_inputs://
+
+            //- unsigned char pix_arr[512*512*4]; //:AKA[ image ]-//
+            //- unsigned int  pix_wid=( 512 );                   -//
+            //- unsigned int  pix_hig=( 512 );                   -//
+
+            //:SAVE_FILE_PNG:------------------------------------://
+            #define FILE_PNG ( "USE:nof_wex" );
+
+                //:create_relative_file_path:fil_png:------------://
+
+                    /**  @VID_IID[ 0095 ]TIME[ 01:08:42 ] ...... **/
+                    /**  Base Name Of The Saved File.     ...... **/
+                    CHR* nam_bas = "MOD/" ;
+
+                    I32  len_nof = strlen( nof_wex );
+                    I32  len_bas = strlen( nam_bas );
+                    I32  len_all =( len_nof + len_bas );
+                    TXT* fil_png =((TXT*)0);
+
+                    /** @VID_IID[ 0095 ]TIME[ 01:07:20 ]  ...... **/
+                    /** Create max index (m_i) variables. ...... **/
+                    I32 m_i_bas =( len_bas           - 1 );
+                    I32 m_i_nof =( len_nof + len_bas - 1 );
+
+                    fil_png = calloc(1, ( len_all + 1 ) );
+
+                    I32 l_i =( 0 ); //:local_index
+
+                    for( I32 i = 0 ; i < len_all ; i ++ ){
+
+                        if( i >=(   0   )
+                        &&  i <=(m_i_bas)
+                        ){
+                            l_i =( i - 0 );
+                            if( l_i < 0 || l_i > m_i_bas ){
+                                ERR("[l_i:OOB:FROM:BASEFOLDER]");
+                            };;
+
+                            fil_png[ i ] = nam_bas[ l_i ];
+                        }else
+                        if( i >=( m_i_bas + 1 ) 
+                        &&  i <=( m_i_nof + 0 )
+                        ){
+                            /** @VID_IID[ 0096 ]TIME[ 00:13:00 ] **/
+                            /** Minus_One_Fix_To_Var[ l_i ]  *** **/
+                            l_i =( i - m_i_bas - 1 );
+                            if( l_i < 0 || l_i > (len_nof-1) ){
+                                ERR("[l_i:OOB:FROM:FILENAME]");
+                            };;
+                            fil_png[ i ] = nof_wex[ l_i ];
+                        }else{
+                            ERR("[OUT_OF_BOUNDS_SAVE_FILE_2021]");
+                        };;
+                    };;
+
+                    /** @VID_IID[ 0095 ]TIME[ 01:25:16 ]      ...**/
+                    /** Make absolutely sure there is a null  ...**/
+                    /** terminator at the end of all of this. ...**/
+                    fil_png[ (len_all+1)-1 ]=( 0x00 );
+
+                //:------------:create_relative_file_path:fil_png://
+
+                //: We don't have a touchFolder, only TouchFile.
+                //: AAC2020_PHEXDUM_TouchFolder("./MOD");
+                AAC2020_PHEXDUM_TouchFile( fil_png /**file_png**/ );
+
+                U32 result = ( 11223344 /** TRAPVALUE **/ );
+
+                #if( AAC2020_INCLUDE_LODEPNG >= 1 ) //:##########://
+
+                    result=( 
+                        lodepng_encode32_file( 
+
+                            fil_png  //:AKA[ file_png ]
+
+                        ,   pix_arr  //:AKA[ image ]
+                        ,   pix_wid 
+                        ,   pix_hig
+                        )
+                    );;
+
+                #endif //:#######################################://
+                #if( AAC2020_INCLUDE_LODEPNG <= 0 ) //:##########://
+
+                    /** @VID_IID[ 3H 17M 18S ] ***************** **/
+                    /** When lodepng is not included, we just    **/
+                    /** want to pretend it returned success      **/
+                    /** so that we do not crash the program.     **/
+                    /** ((( result = ( 0 ) )))                   **/
+                    /** **************************************** **/
+
+                    result = ( 0 );
+
+                    /** @VID_IID[ 0065 ]TIME[ 3H 19M 29S ]   * * **/
+                    /** SILENCE THE COMPILER.                * * **/
+                    if( pix_arr[0]> 1 ){ /** NOOP: NO:LODEPNG **/ };
+                    if( pix_wid   > 1 ){ /** NOOP: NO:LODEPNG **/ };
+                    if( pix_hig   > 1 ){ /** NOOP: NO:LODEPNG **/ };
+
+                    printf("\n\n");
+                    printf("[*********************************]\n");
+                    printf("[- - - - - - - - - - - - - - - - -]\n");
+                    printf("[FROM:LIB/PHEXDUM.F._.............]\n");
+                    printf("[- - - - - - - - - - - - - - - - -]\n");
+                    printf("[PNG_FILE_IS_JUST_A_STUB_FILE.....]\n");
+                    printf("[PLEASE_INCLUDE_LODEPNG_TO_FIX....]\n");
+                    printf("[SET:AAC2020_INCLUDE_LODEPNG >= 1 ]\n");
+                    printf("[*********************************]\n");
+                    printf("[SHOULD_BE_IN: LIBCHAN.TOP._ .....]\n");
+                    printf("[*********************************]\n");
+                    printf("\n\n");
+                    fflush( stdout );
+
+                #endif //:#######################################://
+                //:free_calloc_memory:---------------------------://
+
+                    free( fil_png /**[ file_png / file_path ]**/ );
+
+                //:---------------------------:free_calloc_memory://
+            #undef  FILE_PNG
+            //:------------------------------------:SAVE_FILE_PNG://
+
+            return( result );
+        } 
+
+    #undef  U08                                       //: 01 ://
+    #undef  U32                                       //: 02 ://
+    #undef  I32                                       //: 03 ://
+    #undef  CHR                                       //: 04 ://
+    #undef  TXT                                       //: 05 ://
+    #undef  ERR                                       //: 06 ://
+    //:================================:SAVE_PNG_FILE_TO_DISK://
+
+#undef  I_S /** aac2020_phexdum_Info_str **/
+//:==========================================================://
+//:||||||||||||||||||||||||||||||||||:FILE_READ_WRITE_SECTION://
+//:==========================================================://
 //:PUBLIC_COMMAND_LINE_FUNCTIONS:============================://
 #define I32 int32_t   /** GCC: <stdint.h> .....**/    //: 01 ://
 #define N_S ((CHR*)0) /** NIL Character String **/    //: 02 ://
@@ -52,7 +633,7 @@
             ERR(  "[rel_str_pngfile:___:NIL:001]");
         };;
 
-        RET( "[AAC2020_PHEXDUM_CMD_pngfile_CTO_c99text]" );
+        RET( "[AAC2020_PHEXDUM_CMD_pngfile_CTO_c99text]\n\0" );
     }
     //: - - - - - - - - - - - - ---- - - - - - - - - - - - - ://
     CHR*
@@ -63,7 +644,7 @@
             ERR(  "[rel_str_c99text:___:NIL:002]");
         };;
 
-        RET( "[AAC2020_PHEXDUM_CMD_c99text_CTO_pngfile]" );
+        RET( "[AAC2020_PHEXDUM_CMD_c99text_CTO_pngfile]\n\0" );
     }
     //: - - - - - - - - - - - - ---- - - - - - - - - - - - - ://
     CHR*
@@ -74,7 +655,7 @@
             ERR(  "[rel_str_pngfile:___:NIL:003]");
         };;
 
-        RET( "[AAC2020_PHEXDUM_CMD_pngfile_CTO_naktext]" );
+        RET( "[AAC2020_PHEXDUM_CMD_pngfile_CTO_naktext]\n\0" );
     }
     //: - - - - - - - - - - - - ---- - - - - - - - - - - - - ://
     CHR*
@@ -85,7 +666,7 @@
             ERR(  "[rel_str_naktext:___:NIL:004]");
         };;
 
-        RET( "[AAC2020_PHEXDUM_CMD_naktext_CTO_pngfile]" );
+        RET( "[AAC2020_PHEXDUM_CMD_naktext_CTO_pngfile]\n\0" );
     }
     //: - - - - - - - - - - - - ---- - - - - - - - - - - - - ://
     CHR* 
@@ -93,7 +674,7 @@
     CHR*                nothingfound
     ){
         if( nothingfound ){ /** NOOP **/ };
-        RET( "[KANJICODER_SAYS:COMMAND_NOT_FOUND]" );
+        RET( "[KANJICODER_SAYS:COMMAND_NOT_FOUND]\n\0" );
     }
 #undef  I32  //:----------------------------------------: 01 ://
 #undef  N_S  //:----------------------------------------: 02 ://
@@ -145,13 +726,15 @@
         syn_syn[ 3 ]=(aac2020_phexdum_SYN_pngfile_CTO_naktext );
         syn_syn[ 4 ]=(aac2020_phexdum_SYN_naktext_CTO_pngfile );
 
+        /** tab_enu == ....... **/
         tab_enu[ 0 ]=( 0 ); /** 0 == invalid enum **/
         tab_enu[ 1 ]=(aac2020_phexdum_ENU_pngfile_CTO_c99text );
         tab_enu[ 2 ]=(aac2020_phexdum_ENU_c99text_CTO_pngfile );
         tab_enu[ 3 ]=(aac2020_phexdum_ENU_pngfile_CTO_naktext );
         tab_enu[ 4 ]=(aac2020_phexdum_ENU_naktext_CTO_pngfile );
 
-        tab_fun[ 0 ]=((CMD*)0);
+        /** tab_fun === cmdjump **/
+        tab_fun[ 0 ]=(AAC2020_PHEXDUM_CMD_NothingFound        );
         tab_fun[ 1 ]=(AAC2020_PHEXDUM_CMD_pngfile_CTO_c99text );
         tab_fun[ 2 ]=(AAC2020_PHEXDUM_CMD_c99text_CTO_pngfile );
         tab_fun[ 3 ]=(AAC2020_PHEXDUM_CMD_pngfile_CTO_naktext );

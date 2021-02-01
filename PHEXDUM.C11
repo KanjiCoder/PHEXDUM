@@ -1,20 +1,53 @@
 
 //: PHEXDUM.C11 : Compile This File
 
-    /** AAC2020 library includes **/
-    #include <stdio.h>  //: printf(...)       ...............://
-    #include <stdlib.h> //: exit()            ...............://
-    #include <stdint.h> //: [u32,i32,u08,ETC] ...............://
-    #include <assert.h> //: define NDEBUG to turn off........://
+//:CONFIGURATION_SECTION:====================================://
 
-    /** lodev.org/lodepng/ **/
-    #include "./DEP/lodepng.h"       
-    #include "./DEP/lodepng.c"   
+    /** @VID_IID[ 0121 ]TIME[ 00:53:44 ] ******************* **/
+    /** Ignored if PHEXDUM is part of AAC2020.   **********  **/
+    /** Only used when PHEXDUM is compiled as a  **********  **/
+    /** stand-alone command-line utility.        **********  **/
+    /** **************************************************** **/
+    #define AAC2020_PHEXDUM_STAND_ALONE_ONLY_LOGGING_ON ( 0 )
 
-    /** Our Library Files **/
-    #include "./PHEXDUM.D._"
-    #include "./PHEXDUM.F._"
+//:====================================:CONFIGURATION_SECTION://
 
+    //:aac2020_library_include:------------------------------://
+
+        /** AAC2020 library includes **/
+        #include <stdio.h>  //: printf(...)       ...........://
+        #include <stdlib.h> //: exit()            ...........://
+        #include <stdint.h> //: [u32,i32,u08,ETC] ...........://
+        #include <assert.h> //: define NDEBUG to turn off....://
+
+    //:------------------------------:aac2020_library_include://
+    //:stuff_i_think_i_need_for_mkdir_command:---------------://
+
+        /** stackoverflow.com/questions/230062 **/
+        #include <fcntl.h> /** #SEE_IF_FILE_EXISTS_THEN_USE# **/
+        #include <errno.h> /** #SEE_IF_FILE_EXISTS_THEN_USE# **/
+
+        /** https://stackoverflow.com/questions/23427804/    **/
+        /** https://stackoverflow.com/questions/7430248/     **/
+        #include <sys/stat.h>   /** Create_Directory **/
+        #include <sys/types.h>  /** Create_Directory **/
+
+        /** https://stackoverflow.com/questions/5525668 **/
+        #include <unistd.h> /** Absolute Path Of Your Exe    **/
+        #include <limits.h> /** Absolute Path Of Your Exe    **/
+
+    //:---------------:stuff_i_think_i_need_for_mkdir_command://
+    //:lodepng_and_data_and_function_files:------------------://
+
+        /** lodev.org/lodepng/ **/
+        #include "./DEP/lodepng.h"       
+        #include "./DEP/lodepng.c"   
+
+        /** Our Library Files **/
+        #include "./PHEXDUM.D._"
+        #include "./PHEXDUM.F._"
+
+    //:------------------:lodepng_and_data_and_function_files://
 //:HALT_IS_TYPICALLY_THE_FIRST_FUNCTION:=====================://
     void 
     aac2020_phexdum_c11_file_Halt( const char* msg_err )
@@ -34,7 +67,7 @@
     ,   void*       dat_any   
     )
     { 
-        if( 0 > 1 ){
+        if( AAC2020_PHEXDUM_STAND_ALONE_ONLY_LOGGING_ON >= 1 ){
             /** Same Line As Next Printf **/
             P_F("[phexdum_c11_log]....(   " ); FLU( stdout );
             P_F( str_fmt , dat_any          ); FLU( stdout );
@@ -54,6 +87,8 @@
 
     I32 main(I32 arg_cou, char** arg_arr)
     {
+    LOG("[main:BEG]",0);
+
         //:declare_vars:-------------------------------------://
 
             /** Inputs And Outputs For Command Line **/
@@ -71,7 +106,29 @@
             CMD* cmdfunc       =((CMD*)0); // <--CMD:FUNCTION 
             
         //:-------------------------------------:declare_vars://
+        //:default_values:-----------------------------------://
 
+            fip_out =( AAC2020_PHEXDUM_DEFAULT_fip_out );
+            tex_out =( AAC2020_PHEXDUM_DEFAULT_tex_out );
+
+        //:-----------------------------------:default_values://
+
+        if( 0 == (arg_cou - 1) /** 0 user arguments **/ ){
+
+            CHR* error_output_text_message=(
+                "[ZERO_ARGS:WANTED:2_OR_3]\n\0"
+            );;
+            tex_out = ( error_output_text_message );
+
+        }else
+        if( 1 == ( arg_cou - 1) /** 1 user argument(s) **/ ){
+
+            CHR* error_output_text_message=(
+                "[ONE_ARGUMENT:WANTED:2_OR_3]\n\0"
+            );;
+            tex_out = ( error_output_text_message );
+
+        }else
         if( 0
         ||  2 == (arg_cou - 1) /** 2 user arguments **/
         ||  3 == (arg_cou - 1) /** 3 user arguments **/
@@ -79,10 +136,10 @@
 
             cmdname =( arg_arr[ 1 ] ); /** command      **/
             fip_inn =( arg_arr[ 2 ] ); /** FIlePath:INN **/
-            fip_out =((CHR*)0);        /** FIlePath:OUT **/
+            
 
-            if( ( arg_cou - 1 ) >= 3 ){
-                fip_out =( arg_arr[ 3 ] );
+            if( ( arg_cou - 1 ) >=  2 ){
+                fip_out =( arg_arr[ 2 ] );
             };;
 
             //:call_function_from_jump_table:================://
@@ -96,8 +153,8 @@
                                       cmdname ));;
 
             LOG("[ABOUT_TO_POPULATE_JUMP_TABLE]",0);
-            assert( cmdenum >= 1 && cmdenum <= 4 );
-            JMP[ 0 ]=((CMD*)0); /** No function slot 0 **/
+            assert( cmdenum >= 0 && cmdenum <= 4 );
+            JMP[ 0 ]=(AAC2020_PHEXDUM_CMD_NothingFound        );
             JMP[ 1 ]=(AAC2020_PHEXDUM_CMD_pngfile_CTO_c99text );
             JMP[ 2 ]=(AAC2020_PHEXDUM_CMD_c99text_CTO_pngfile );
             JMP[ 3 ]=(AAC2020_PHEXDUM_CMD_pngfile_CTO_naktext );
@@ -106,12 +163,12 @@
             /** Execute proper function **/
             
             if( 1
-            &&  cmdenum >= 1 
+            &&  cmdenum >= 0
             &&  cmdenum <= 4 
             ){
                 if( ((CMD*)0)==cmdfunc ){
 
-                    tex_out =("[ERR:NULL_CMDFUNC_POINTER]");
+                    tex_out =("[ERR:NULL_CMDFUNC_POINTER]\0");
 
                 }else{
                     
@@ -127,28 +184,39 @@
             #undef  JMP
             //:================:call_function_from_jump_table://
 
-        }else{
-            CHR* error_output_text_message=(
-                "[KANJI_CODER_SAYS:USE_EXACTLY_2_USER_ARGS]\n"
-            );;
-            printf(     error_output_text_message );
-            tex_out = ( error_output_text_message );
         };;
 
         //:save_text_to_output_file:=========================://
+        #define N_S ((CHR*)0)
+        LOG("[save_text_to_output_file:BEG]",0);
 
             if( ((CHR*)0) == tex_out ){
                 ERR("[NULL_OUTPUT_TEXT_SHOULD_NEVER_HAPPEN]");
             }else{
-
-                if( fip_out ){ /** NOOP **/ };
+            
+                I32 str_len=( 0-777 );
+                
+                if( N_S == fip_out ){ ERR("[NIL:fip_out]"); };
+                if( N_S == tex_out ){ ERR("[NIL:tex_out]"); };
+                str_len = strlen( tex_out );
+                if( str_len <= 0   ){ ERR("[LEN:str_len]"); };
 
                 printf( tex_out );
-                //: TODO FIGURE THIS OUT <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< TODO
+                fflush(stdout);
+                
+                
+                AAC2020_PHEXDUM_SaveFile_TXT( 
+                    fip_out //:<--[ NameOfFile( nof_wex )  ]
+                ,   tex_out //:<--[ Text To Save To File   ]
+                ,   str_len //:<--[ Length_Of_Text         ]
+                );;
 
             };;
 
+        LOG("[save_text_to_output_file:END]",0);
+        #undef  N_S
         //:=========================:save_text_to_output_file://
+    LOG("[main:END]",0);
     }
     
 #undef  CHR  //:----------------------------------------: 01 ://
