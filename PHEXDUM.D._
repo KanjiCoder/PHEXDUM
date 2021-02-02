@@ -101,18 +101,20 @@
 
 //:=======================================:COMMAND_JUMP_TABLE://
 //:NOT_FUNCTION_POINTERS:====================================://
-#define CMD PHEXDUM_CMDLINE_FUNCTION
-#define CHR const char
+#define CMD PHEXDUM_CMDLINE_FUNCTION   //:--------------: 01 ://
+#define CHR const char                 //:--------------: 02 ://
+#define C_C const char                 //:--------------: 03 ://
 
-    extern CHR* AAC2020_PHEXDUM_CMD_pngfile_CTO_c99text( CHR* );
-    extern CHR* AAC2020_PHEXDUM_CMD_c99text_CTO_pngfile( CHR* );
-    extern CHR* AAC2020_PHEXDUM_CMD_pngfile_CTO_naktext( CHR* );
-    extern CHR* AAC2020_PHEXDUM_CMD_naktext_CTO_pngfile( CHR* );
+    extern C_C* AAC2020_PHEXDUM_CMD_pngfile_CTO_c99text( C_C* );
+    extern C_C* AAC2020_PHEXDUM_CMD_c99text_CTO_pngfile( C_C* );
+    extern C_C* AAC2020_PHEXDUM_CMD_pngfile_CTO_naktext( C_C* );
+    extern C_C* AAC2020_PHEXDUM_CMD_naktext_CTO_pngfile( C_C* );
 
-    extern CHR* AAC2020_PHEXDUM_CMD_NothingFound(        CHR* );
+    extern C_C* AAC2020_PHEXDUM_CMD_NothingFound(        C_C* );
 
-#undef  CMD
-#undef  CHR
+#undef  CMD  //:----------------------------------------: 01 ://
+#undef  CHR  //:----------------------------------------: 02 ://
+#undef  C_C  //:----------------------------------------: 03 ://
 //:====================================:NOT_FUNCTION_POINTERS://
 //:COMMAND_ENUMERATIONS:=====================================://
 #define I32 int32_t /** GCC: <stdint.h> **/
