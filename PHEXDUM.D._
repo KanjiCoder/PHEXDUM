@@ -74,15 +74,44 @@
 *** ******************************************************** **/
 //:MISC_WHATEVER:============================================://
 #define CHR const char
+#define ASC       char
+#define U08    uint8_t /** GCC: <stdint.h> **/
 
     CHR* AAC2020_PHEXDUM_DEFAULT_fip_out =( 
         "PNG_ORR_TXT.___\0" );
 
     CHR* AAC2020_PHEXDUM_DEFAULT_tex_out =( 
        "[AAC2020_PHEXDUM_DEFAULT_tex_out]\n\0" );
+
+    struct AAC2020_PHEXDUM_payload={
+
+            I32 bin_txt ; //: 0+1 ==> YES text ( anytext )
+                          //: 0-1 ==> NOT text ( pngfile )
+
+        /** Always Binary PNG File.             **/
+        /** NEVER de-compressed raw pixel data. **/
+
+            U08* pngfile ;  /** arr_png / u08_arr / arr_u08 **/
+            //:  png_wid ;  /** arr_wid **/
+            //:  png_hig ;  /** arr_hig **/
+
+        /** A character array that we will **/
+        /** save to a text file.           **/
+
+            ASC* anytext ;  /** arr_asc / asc_arr **/
+                            /** c99text | naktext **/
+
+        /** pngfile.length  **/
+        /** anytext.length  **/
+
+            I32  arr_len ;
+
+    };
                                           
 
 #undef  CHR
+#undef  ASC
+#undef  U08
 //:============================================:MISC_WHATEVER://
 //:FUNCTION_POINTER_TYPES:===================================://
 #define CHR const char
@@ -104,17 +133,21 @@
 #define CMD PHEXDUM_CMDLINE_FUNCTION   //:--------------: 01 ://
 #define CHR const char                 //:--------------: 02 ://
 #define C_C const char                 //:--------------: 03 ://
+#define PAY AAC2020_PHEXDUM_payload    //:--------------: 04 ://
+#define E_V extern void 
 
-    extern C_C* AAC2020_PHEXDUM_CMD_pngfile_CTO_c99text( C_C* );
-    extern C_C* AAC2020_PHEXDUM_CMD_c99text_CTO_pngfile( C_C* );
-    extern C_C* AAC2020_PHEXDUM_CMD_pngfile_CTO_naktext( C_C* );
-    extern C_C* AAC2020_PHEXDUM_CMD_naktext_CTO_pngfile( C_C* );
-
-    extern C_C* AAC2020_PHEXDUM_CMD_NothingFound(        C_C* );
+    E_V AAC2020_PHEXDUM_CMD_pngfile_CTO_c99text( C_C* , PAY* );
+    E_V AAC2020_PHEXDUM_CMD_c99text_CTO_pngfile( C_C* , PAY* );
+    E_V AAC2020_PHEXDUM_CMD_pngfile_CTO_naktext( C_C* , PAY* );
+    E_V AAC2020_PHEXDUM_CMD_naktext_CTO_pngfile( C_C* , PAY* );
+                                                 
+    E_V AAC2020_PHEXDUM_CMD_NothingFound(        C_C* , PAY* );
 
 #undef  CMD  //:----------------------------------------: 01 ://
 #undef  CHR  //:----------------------------------------: 02 ://
 #undef  C_C  //:----------------------------------------: 03 ://
+#undef  PAY  //:----------------------------------------: 04 ://
+#undef  E_V  //:----------------------------------------: 05 ://
 //:====================================:NOT_FUNCTION_POINTERS://
 //:COMMAND_ENUMERATIONS:=====================================://
 #define I32 int32_t /** GCC: <stdint.h> **/

@@ -975,6 +975,50 @@
 #define I32 int32_t /** GCC: <stdint.h> **/           //: 02 ://
 #define CHR char                                      //: 03 ://
 #define ERR aac2020_phexdum_Halt                      //: 04 ://
+    //: - - - - - - - - - - - - ---- - - - - - - - - - - - - ://
+    void
+    AAC2020_PHEXDUM_nak_tex_CTO_u08_arr(
+        CHR*        nak_tex
+    ,   I32         nak_len
+    ,   U08*             *BYREF_u08_arr  
+    ,   I32              *BYREF_arr_len  
+    )
+    {
+        //:check_inputs:-------------------------------------://
+        #define U08_ARR  BYREF_u08_arr
+        #define ARR_LEN  BYREF_arr_len
+            
+            //:@VID_IID[ 0124 ]TIME[ 01:20:30 ] :::::::::::::://
+            if(((CHR* )0) ==  nak_tex ){ ERR("[001:0735AM]"); };
+            if(        0  >=  nak_len ){ ERR("[002:0735AM]"); };
+            if(((U08**)0) ==  U08_ARR ){ ERR("[003:0735AM]"); };
+            if(((I32* )0) ==  ARR_LEN ){ ERR("[004:0735AM]"); };
+            if(((U08* )0) !=(*U08_ARR)){ ERR("[005:0735AM]"); };
+            if((       0) !=(*ARR_LEN)){ ERR("[006:0735AM]"); };
+
+        #undef  U08_ARR  
+        #undef  ARR_LEN   
+        //:-------------------------------------:check_inputs://
+        //:variable_declaration:-----------------------------://
+
+            U08* u08_arr=((U08*)0);
+            I32  arr_len=(   0   );
+
+        //:-----------------------------:variable_declaration://
+        
+
+        //:<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< TODO
+
+
+        //:return_via_output_params:-------------------------://
+
+        ( *BYREF_u08_arr )=( u08_arr );
+        ( *BYREF_arr_len )=( arr_len );
+
+        //:-------------------------:return_via_output_params://
+    }
+
+    //: - - - - - - - - - - - - ---- - - - - - - - - - - - - ://
 
     void
     AAC2020_PHEXDUM_u08_arr_CTO_nak_tex(
@@ -1178,7 +1222,9 @@
 #define CHR          char                             //: 08 ://
 #define U_C unsigned char                             //: 09 ://
 #define C_C const    char                             //: 10 ://
-#define CFS aac2020_phexdum_CreateFreeableString      //: 11 ://
+#define CUC const unsigned char                       //: 11 ://
+#define CFS aac2020_phexdum_CreateFreeableString      //: 12 ://
+
     //: - - - - - - - - - - - - ---- - - - - - - - - - - - - ://
     extern C_C* AAC2020_PHEXDUM_CMD_pngfile_CTO_naktext( C_C* );
     extern C_C* AAC2020_PHEXDUM_CMD_naktext_CTO_pngfile( C_C* );
@@ -1299,15 +1345,160 @@
         RET(    nak_tex );
     }
     //: - - - - - - - - - - - - ---- - - - - - - - - - - - - ://
-    C_C*
+    void
     AAC2020_PHEXDUM_CMD_naktext_CTO_pngfile( 
-    C_C*        rel_str_naktext
+        C_C*    rel_str_naktext
+    ,   U08*                 *BYREF_pngfile_arr
+    ,   I32                  *BYREF_pngfile_len
     )
     {   if( N_S ==  rel_str_naktext ){
             ERR(  "[rel_str_naktext:___:NIL:004]");
         };;
 
-        RET(CFS("[TODO:naktext_CTO_pngfile]\n\0" ));
+        //:<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< TODO FINISH <<<<<<<<<<<<<
+
+        //+__________________________________________________+//
+        //+                                                  +//
+        //+declare_variables:--------------------------------+//
+        //| VARS: AAC2020_PHEXDUM_LoadFileIfExists |||||||||||//
+
+            C_C* fip_inn =( rel_str_naktext    );
+            I32  bin_txt =( 0+1 /**YES TEXT**/ );
+            U08* fil_mem =((U08*)0             );
+            I32  fil_nob =(   0                );
+
+        //| VARS: AAC2020_PHEXDUM_nak_tex_CTO_u08_arr ||||||||//
+
+            CHR* nak_tex = ((CHR*)0); //:<-- INN
+            I32  nak_len = (   0   ); //:<-- INN
+
+            U08* u08_arr = ((U08*)0); //:<-- OUT
+            I32  arr_len = (   0   ); //:<-- OUT
+
+        //| VARS: lodepng_encode32 |||||||||||||||||||||||||||//
+
+            U_C* out_chr_buf =((U_C*)0);
+            I32  out_i32_siz =( 0 - 2 );
+
+            U08* inn_u08_pix =((U08*)0);
+            U32  inn_i32_wid =(   0   ); //:<--[ i32 ==> u32 ]
+            U32  inn_i32_hig =(   0   ); //:<--[ i32 ==> u32 ]
+
+        //| VARS: OUTPUT_RETURN ||||||||||||||||||||||||||||||//
+
+            U08* pngfile_arr =((U08*)0);
+            I32  pngfile_len =(      0);
+
+        //+--------------------------------:declare_variables+//
+        //+__________________________________________________+//
+        //:Load_File_From_Hard_Disk:-------------------------://
+
+            /** Or solid state drive or whatever the .... **/
+
+            AAC2020_PHEXDUM_LoadFileIfExists(
+                fip_inn  //: CHR*  FIlePath_INNput
+            ,   bin_txt  //: I32   is[ bin_txt ]?
+            , &(fil_mem) //: U08** DESTINATION
+            , &(fil_nob) //: I32*  file number of bytes
+            );;
+
+        //:-------------------------:Load_File_From_Hard_Disk://
+        //:U32_HexDumpAsciiString_To_U08_Bytes:--------------://
+
+            nak_tex =( C_C* )( fil_mem );
+            nak_len =(         fil_nob );
+
+            AAC2020_PHEXDUM_nak_tex_CTO_u08_arr(
+                            nak_tex //:<--- ASCII TEXT
+            ,               nak_len //:<--- ASCII TEXT
+            ,             &(u08_arr)//:<--- BYTE_ARRAY
+            ,             &(arr_len)//:<--- BYTE_ARRAY
+            );;
+
+        //:--------------:U32_HexDumpAsciiString_To_U08_Bytes://
+////    //:GOT_RAW_BITMAP_OR_PNG_BINARY[?]:------------------://
+////    #define STORE_PNG_FILE_BINARY_FROM_DISK ( 1 )
+////    #define  STORE_UNCOMPRESSED_BITMAP_DATA ( 2 )
+////
+////        I32
+////        storage_mode=( STORE_PNG_FILE_BINARY_FROM_DISK );
+////
+////        switch( storage_mode ){  //:- - - - - - - - - - -://
+////
+////        case ( STORE_UNCOMPRESSED_BITMAP_DATA ):{
+////        /** ******************************************** ***
+////            When using conversion functions, we should 
+////            use SAME conversion mode for both directions.
+////            So... If you used[ storage_mode == 1 ]
+////            for[ naktext_CTO_pngfile ]Then you should
+////            also use[ storage_mode == ]for the inverse
+////            [ pngfile_CTO_naktext ].
+////            @VID_IID[ 0124 ]TIME[ 00:31:01 ]
+////        *** ******************************************** **/
+////
+////            /** 4 bytes per pixel **/
+////            I32 tot_pix = ( fil_nob / 4 );
+////            if( tot_pix != ( 512 * 512 ) ){
+////                //:Make it easy on use. Always     ::::::://
+////                //:assume bitmaps are [512x512]    ::::::://
+////                //:pixels. This allows us to       ::::::://
+////                //:re-constitute a 1D array        ::::::://
+////                //:of pixels into an image without ::::::://
+////                //:knowing the width or height.    ::::::://
+////                //:Maybe later we will get clever  ::::::://
+////                //:and use ANY[ tot_pix ]that      ::::::://
+////                //:is.. not just a power of 2...   ::::::://
+////                //:but can be "square rooted"      ::::::://
+////                //:cleanly. (non fractional).      ::::::://
+////                //:Example: if[ tot_pix ]==9 we    ::::::://
+////                //:know we have a 3x3 bitmap.      ::::::://
+////                ERR("[UNEXPECTED_SIZE]");
+////            };;
+////            U32 u32_san =( 512 );
+////            if((u32_san * u32_san)!=(tot_pix)){
+////                ERR("[INVALID_U32_SPAN_YEAR:2021]");
+////            };;
+////
+////            /** Turn_Raw_Bitmap_Into_PNG_File **/
+////            lodepng_encode32(
+////                    &( out_chr_buf           )
+////            ,       &( out_i32_siz           )
+////            ,  (CUC*)( inn_u08_pix           )
+////            ,        ( inn_i32_wid = u32_san )
+////            ,        ( inn_i32_hig = u32_san )
+////            );;
+////    
+////            pngfile_arr =( out_chr_buf ); 
+////            pngfile_len =( out_i32_siz );
+////
+////        };;break;
+////        case ( STORE_PNG_FILE_BINARY_FROM_DISK ):{
+////
+////            pngfile_arr = u08_arr ;
+////            pngfile_len = arr_len ;               
+////
+////        };;break;
+////        default:{
+////
+////            ERR("[BAD_STORAGE_CONSTANT_PROVIDED]");
+////
+////        };;};; //:- - - - - - - - - - - - - - - - - - - -://
+////
+////    #undef  STORE_PNG_FILE_BINARY_FROM_DISK  
+////    #undef   STORE_UNCOMPRESSED_BITMAP_DATA  
+////    //:------------------:GOT_RAW_BITMAP_OR_PNG_BINARY[?]://
+////    //:Save_File_To_Disk:--------------------------------://
+////
+////        /** NOPE! Dont do this. That is the job of the   **/
+////        /** calling function. @VID_IID[0121]T[04:57:20 ] **/
+////
+////    //:--------------------------------:Save_File_To_Disk://
+        //:return_png_binary_using_output_params:------------://
+
+            (*BYREF_pngfile_arr)=( pngfile_arr );
+            (*BYREF_pngfile_len)=( pngfile_len );
+
+        //:------------:return_png_binary_using_output_params://
     }
     //: - - - - - - - - - - - - ---- - - - - - - - - - - - - ://
     C_C*
@@ -1350,7 +1541,8 @@
 #undef  CHR  //:----------------------------------------: 08 ://
 #undef  U_C  //:----------------------------------------: 09 ://
 #undef  C_C  //:----------------------------------------: 10 ://
-#undef  CFS  //:----------------------------------------: 11 ://
+#undef  CUC  //:----------------------------------------: 11 ://
+#undef  CFS  //:----------------------------------------: 12 ://
 //:============================:PUBLIC_COMMAND_LINE_FUNCTIONS://
 //:COMMAND_LINE_HELPER_FUNCTIONS:============================://
 #define I32  int32_t /** GCC: <stdint.h> **/          //: 01 ://

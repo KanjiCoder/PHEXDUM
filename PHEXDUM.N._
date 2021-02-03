@@ -1,0 +1,28 @@
+        
+
+        U32 
+        AAC2020_PHEXDUM_LoadFileIfExists(
+            CHR*         fip_inn //:FILE <<< INN
+        ,   I32          bin_txt //:ASC=1  PNG=0
+        ,   U08*  *BYREF_fil_mem //:DEST >>> OUT
+        ,   I32   *BYREF_fil_nob //:SIZE >>> OUT
+        )
+
+    U_C* out_chr_buf =((U_C*)0);
+    I32  out_i32_siz =( 0 - 2 );
+    
+    U08* inn_u08_pix =((U08*)0);
+    U32  inn_i32_wid =(   0   );
+    U32  inn_i32_hig =(   0   );
+
+    naktext_CTO_pngfile
+
+    ABABABA --> 0101010
+    TEXT -----> IMAGE
+
+unsigned lodepng_encode32(
+    unsigned char** out, 
+    size_t* outsize, 
+    const unsigned char* image, 
+    unsigned w, 
+    unsigned h) {
