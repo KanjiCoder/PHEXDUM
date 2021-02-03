@@ -41,6 +41,7 @@
     //:lodepng_and_data_and_function_files:------------------://
 
         /** lodev.org/lodepng/ **/
+        #define AAC2020_INCLUDE_LODEPNG ( 1 )
         #include "./DEP/lodepng.h"       
         #include "./DEP/lodepng.c"   
 
