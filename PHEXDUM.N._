@@ -26,3 +26,21 @@ unsigned lodepng_encode32(
     const unsigned char* image, 
     unsigned w, 
     unsigned h) {
+
+//:VARIABLE_NAMES:===========================================://
+
+    pay_err : PAYLOAD.ERROR , an error payload.
+    err_pay : Backwards, you mean[ pay_err ].
+              Yes it reads as better english as 
+             "error payload" but it wrecks the regularness
+              of our "general to specific" rule.
+
+
+//:===========================================:VARIABLE_NAMES://
+//:SHORTHAND_NAMES:==========================================://
+
+    RET_OUT : RETurn value / OUTput
+    FUN_NAM : FUNction NAMe
+    ARG_INN : ARGument / INNput
+
+//:==========================================:SHORTHAND_NAMES://

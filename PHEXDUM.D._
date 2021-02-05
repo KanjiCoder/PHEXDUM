@@ -73,20 +73,53 @@
 
 *** ******************************************************** **/
 //:MISC_WHATEVER:============================================://
-#define CHR const char
-#define ASC       char
-#define U08    uint8_t /** GCC: <stdint.h> **/
+#define CHR const    char                             //: 01 ://
+#define ASC          char                             //: 02 ://
+#define U08       uint8_t /** GCC: <stdint.h> **/     //: 03 ://
+#define C32 const int32_t /** GCC: <stdint.h> **/     //: 04 ://
+#define I32       int32_t /** GCC: <stdint.h> **/     //: 05 ://
 
-    CHR* AAC2020_PHEXDUM_DEFAULT_fip_out =( 
-        "PNG_ORR_TXT.___\0" );
+    /** max number of synonyms **/
+    #define AAC2020_PHEXDUM_SYN_NOE ( 11 )
 
-    CHR* AAC2020_PHEXDUM_DEFAULT_tex_out =( 
-       "[AAC2020_PHEXDUM_DEFAULT_tex_out]\n\0" );
+    /** Default [fi]le p[path] [out]put - - - - - - - - - - -**/
 
-    struct AAC2020_PHEXDUM_payload={
+        CHR* AAC2020_PHEXDUM_DEFAULT_fip_out =( 
+            "PNG_ORR_TXT.___\0" );
 
-            I32 bin_txt ; //: 0+1 ==> YES text ( anytext )
-                          //: 0-1 ==> NOT text ( pngfile )
+    /** Default Text Output - - - - - - - - - - - - - - - - -**/
+
+        CHR* AAC2020_PHEXDUM_DEFAULT_tex_out =( 
+           "[AAC2020_PHEXDUM_DEFAULT_tex_out]\n\0" );
+
+    /** Default [fi]le d[ata] [out]put  - - - - - - - - - - -**/
+
+        CHR* AAC2020_PHEXDUM_DEFAULT_fid_out =(
+           "[AAC2020_PHEXDUM_DEFAULT_fid_out]\n\0" );
+
+    /** @VID_IID[ 0126 ]TIME[ 03:30:00 ] **/
+    /** rbsrbs: bootleg enum LUL ******* **/
+    //- C32 AAC2020_PHEXDUM_PAYLOAD_ENU_anytext =( 0 + 1 );  -//
+    //- C32 AAC2020_PHEXDUM_PAYLOAD_ENU_pngfile =( 0 - 1 );  -//
+
+    enum 
+    AAC2020_PHEXDUM_payload_file_type {
+        /** ************************************************ ***
+        @VID_IID[ 0126 ]TIME[ 03:47:00 ]
+        rbsrbs: yeah, it's mainly to avoid magic 
+                values and mixing them
+        rbsrbs: the naming can be used as a 
+                documentation
+        *** ************************************************ **/
+        AAC2020_PHEXDUM_P_T_INVALID = 0
+    ,   AAC2020_PHEXDUM_P_T_ANYTEXT
+    ,   AAC2020_PHEXDUM_P_T_PNGFILE
+    };
+
+    struct AAC2020_PHEXDUM_payload{
+    #define P_T enum AAC2020_PHEXDUM_payload_file_type
+
+            P_T bin_txt ;  
 
         /** Always Binary PNG File.             **/
         /** NEVER de-compressed raw pixel data. **/
@@ -101,27 +134,37 @@
             ASC* anytext ;  /** arr_asc / asc_arr **/
                             /** c99text | naktext **/
 
-        /** pngfile.length  **/
-        /** anytext.length  **/
+        /** pngfile.length  ........................... **/
+        /** anytext.length  ........................... **/
+        /** If is[ anytext ]The[ arr_len ]does NOT      **/  
+        /** include the null terminator as part of it's **/
+        /** length.                                     **/
 
             I32  arr_len ;
 
+    #undef PAY_TYP
     };
                                           
-
-#undef  CHR
-#undef  ASC
-#undef  U08
+#undef  CHR  //:----------------------------------------: 01 ://
+#undef  ASC  //:----------------------------------------: 02 ://
+#undef  U08  //:----------------------------------------: 03 ://
+#undef  C32  //:----------------------------------------: 04 ://
+#undef  I32  //:----------------------------------------: 05 ://
 //:============================================:MISC_WHATEVER://
 //:FUNCTION_POINTER_TYPES:===================================://
-#define CHR const char
+#define CHR const char                                //: 01 ://
+#define PAY struct AAC2020_PHEXDUM_payload            //: 02 ://
 
-    typedef CHR* (PHEXDUM_CMDLINE_FUNCTION)( CHR* rel_str );
+    typedef 
+        void                               //:<--- RET_OUT   ://
+        (PHEXDUM_CMDLINE_FUNCTION)         //:<--- FUN_NAM   ://
+        ( CHR* rel_str , PAY* payload );   //:<--- ARG_INN   ://
 
     /** void FUNCTION pointer **/
     typedef void (PHEXDUM___ANY___FUNCTION)(void);
 
-#undef  CHR
+#undef  CHR  //:----------------------------------------: 01 ://
+#undef  PAY  //:----------------------------------------: 02 ://
 //:===================================:FUNCTION_POINTER_TYPES://
 //:COMMAND_JUMP_TABLE:=======================================://
 
@@ -131,10 +174,10 @@
 //:=======================================:COMMAND_JUMP_TABLE://
 //:NOT_FUNCTION_POINTERS:====================================://
 #define CMD PHEXDUM_CMDLINE_FUNCTION   //:--------------: 01 ://
-#define CHR const char                 //:--------------: 02 ://
-#define C_C const char                 //:--------------: 03 ://
-#define PAY AAC2020_PHEXDUM_payload    //:--------------: 04 ://
-#define E_V extern void 
+#define PAY struct AAC2020_PHEXDUM_payload  //:---------: 02 ://
+#define CHR const char                 //:--------------: 03 ://
+#define C_C const char                 //:--------------: 04 ://
+#define E_V extern void                //:--------------: 05 ://
 
     E_V AAC2020_PHEXDUM_CMD_pngfile_CTO_c99text( C_C* , PAY* );
     E_V AAC2020_PHEXDUM_CMD_c99text_CTO_pngfile( C_C* , PAY* );
@@ -144,9 +187,9 @@
     E_V AAC2020_PHEXDUM_CMD_NothingFound(        C_C* , PAY* );
 
 #undef  CMD  //:----------------------------------------: 01 ://
-#undef  CHR  //:----------------------------------------: 02 ://
-#undef  C_C  //:----------------------------------------: 03 ://
-#undef  PAY  //:----------------------------------------: 04 ://
+#undef  PAY  //:----------------------------------------: 02 ://
+#undef  CHR  //:----------------------------------------: 03 ://
+#undef  C_C  //:----------------------------------------: 04 ://
 #undef  E_V  //:----------------------------------------: 05 ://
 //:====================================:NOT_FUNCTION_POINTERS://
 //:COMMAND_ENUMERATIONS:=====================================://
@@ -161,22 +204,23 @@
 //:=====================================:COMMAND_ENUMERATIONS://
 //:COMMAND_NORMALIZATION_TABLE:==============================://
 //:SYN____FOR____SYNONYM_TABLE:==============================://
-#define CHR const char
+#define CHR        const char                         //: 01 ://
+#define ECC extern const char                         //: 02 ://
+#define NOE AAC2020_PHEXDUM_SYN_NOE                                   //: 03 ://
 
     //: - - - - - - - - - - - - ---- - - - - - - - - - - - - ://
     //: CHR**  type(s):--------------------------------------://
-    extern CHR*  aac2020_phexdum_SYN_pngfile_CTO_c99text[ 9 ] ;
-    extern CHR*  aac2020_phexdum_SYN_c99text_CTO_pngfile[ 9 ] ;
-    extern CHR*  aac2020_phexdum_SYN_pngfile_CTO_naktext[ 9 ] ;
-    extern CHR*  aac2020_phexdum_SYN_naktext_CTO_pngfile[ 9 ] ;
+    ECC*  aac2020_phexdum_SYN_pngfile_CTO_c99text[ NOE + 1  ] ;
+    ECC*  aac2020_phexdum_SYN_c99text_CTO_pngfile[ NOE + 1  ] ;
+    ECC*  aac2020_phexdum_SYN_pngfile_CTO_naktext[ NOE + 1  ] ;
+    ECC*  aac2020_phexdum_SYN_naktext_CTO_pngfile[ NOE + 1  ] ;
 
     //: CHR*** type(s): -------------------------------------://
     extern CHR** aac2020_phexdum_SYN_SYN[ 5 ];
     //: - - - - - - - - - - - - ---- - - - - - - - - - - - - ://
     CHR*            /** invalid_command **/
-    aac2020_phexdum_SYN_invalid_command[ 9 ]={
-    /**/"[AAC2020_ENGINE_BY_KANJICODER:INVALID_COMMAND_000]"
-    ,   "[AAC2020_ENGINE_BY_KANJICODER:INVALID_COMMAND_001]"
+    aac2020_phexdum_SYN_invalid_command[ NOE + 1 ]={
+    /**/"[AAC2020_ENGINE_BY_KANJICODER:INVALID_COMMAND_001]"
     ,   "[AAC2020_ENGINE_BY_KANJICODER:INVALID_COMMAND_002]"
     ,   "[AAC2020_ENGINE_BY_KANJICODER:INVALID_COMMAND_003]"
     ,   "[AAC2020_ENGINE_BY_KANJICODER:INVALID_COMMAND_004]"
@@ -184,10 +228,14 @@
     ,   "[AAC2020_ENGINE_BY_KANJICODER:INVALID_COMMAND_006]"
     ,   "[AAC2020_ENGINE_BY_KANJICODER:INVALID_COMMAND_007]"
     ,   "[AAC2020_ENGINE_BY_KANJICODER:INVALID_COMMAND_008]"
+    ,   "[AAC2020_ENGINE_BY_KANJICODER:INVALID_COMMAND_009]"
+    ,   "[AAC2020_ENGINE_BY_KANJICODER:INVALID_COMMAND_010]"
+    ,   "[AAC2020_ENGINE_BY_KANJICODER:INVALID_COMMAND_011]"
+    ,   ((CHR*)0)
     };
     //: - - - - - - - - - - - - ---- - - - - - - - - - - - - ://
     CHR*            /** pngfile_CTO_c99text **/
-    aac2020_phexdum_SYN_pngfile_CTO_c99text[ 9 ]={
+    aac2020_phexdum_SYN_pngfile_CTO_c99text[ NOE + 1  ]={
     /**/"copyright_2021_atomic_alice_c_engine(AAC2020):001"
     ,   "png-to-c99"  
     ,   "png_to_c99" 
@@ -197,10 +245,13 @@
     ,   "pngfile_cto_c99text"
     ,   "pngfile-CTO-c99text"
     ,   "pngfile_CTO_c99text"
+    ,   "png_cto_c99"
+    ,   "png-cto-c99"
+    ,   ((CHR*)0)
     };
     //: - - - - - - - - - - - - ---- - - - - - - - - - - - - ://
     CHR*            /** c99text_CTO_pngfile **/
-    aac2020_phexdum_SYN_c99text_CTO_pngfile[ 9 ]={
+    aac2020_phexdum_SYN_c99text_CTO_pngfile[ NOE + 1  ]={
     /**/"copyright_2021_atomic_alice_c_engine(AAC2020):002"
     ,   "c99-to-png"  
     ,   "c99_to_png" 
@@ -210,10 +261,13 @@
     ,   "c99text_cto_pngfile"
     ,   "c99text-CTO-pngfile"
     ,   "c99text_CTO_pngfile"
+    ,   "c99_cto_png"
+    ,   "c99-cto-png"
+    ,   ((CHR*)0)
     };
     //: - - - - - - - - - - - - ---- - - - - - - - - - - - - ://
     CHR*            /** pngfile_CTO_naktext **/
-    aac2020_phexdum_SYN_pngfile_CTO_naktext[ 9 ]={
+    aac2020_phexdum_SYN_pngfile_CTO_naktext[ NOE + 1  ]={
     /**/"copyright_2021_atomic_alice_c_engine(AAC2020):003"
     ,   "png-to-nak"  
     ,   "png_to_nak" 
@@ -223,10 +277,13 @@
     ,   "pngfile_cto_naktext"
     ,   "pngfile-CTO-naktext"
     ,   "pngfile_CTO_naktext"
+    ,   "png_cto_nak"
+    ,   "png-cto-nak"
+    ,   ((CHR*)0)
     };
     //: - - - - - - - - - - - - ---- - - - - - - - - - - - - ://
     CHR*            /** naktext_CTO_pngfile **/
-    aac2020_phexdum_SYN_naktext_CTO_pngfile[ 9 ]={
+    aac2020_phexdum_SYN_naktext_CTO_pngfile[ NOE + 1  ]={
     /**/"copyright_2021_atomic_alice_c_engine(AAC2020):004"
     ,   "nak-to-png"  
     ,   "nak_to_png" 
@@ -236,7 +293,10 @@
     ,   "naktext_cto_pngfile"
     ,   "naktext-CTO-pngfile"
     ,   "naktext_CTO_pngfile"
-    };
+    ,   "nak_cto_png"
+    ,   "nak-cto-png"
+    ,   ((CHR*)0) //:<--@VID_IID[ 0126 ]TIME[ 00:18:00 ]
+    };            //:           [Null_Terminated_List__]
     //: - - - - - - - - - - - - ---- - - - - - - - - - - - - ://
     CHR**
     aac2020_phexdum_SYN_SYN[ 4 + 1 ]={
@@ -249,6 +309,8 @@
     };
     //: - - - - - - - - - - - - ---- - - - - - - - - - - - - ://
 
-#undef  CHR
+#undef  CHR  //:----------------------------------------: 01 ://
+#undef  ECC  //:----------------------------------------: 02 ://
+#undef  NOE  //:----------------------------------------: 03 ://
 //:==============================:SYN____FOR____SYNONYM_TABLE://
 //:==============================:COMMAND_NORMALIZATION_TABLE://

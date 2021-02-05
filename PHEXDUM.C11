@@ -11,6 +11,7 @@
     #define AAC2020_PHEXDUM_STAND_ALONE_ONLY_LOGGING_ON ( 0 )
 
 //:====================================:CONFIGURATION_SECTION://
+//:INCLUDES_SECTION:=========================================://
 
     //:aac2020_library_include:------------------------------://
 
@@ -20,6 +21,7 @@
         #include <stdint.h> //: [u32,i32,u08,ETC] ...........://
         #include <assert.h> //: define NDEBUG to turn off....://
         #include <ctype.h>  //: toupper , tolower
+        
 
     //:------------------------------:aac2020_library_include://
     //:stuff_i_think_i_need_for_mkdir_command:---------------://
@@ -50,223 +52,23 @@
         #include "./PHEXDUM.F._"
 
     //:------------------:lodepng_and_data_and_function_files://
-//:HALT_IS_TYPICALLY_THE_FIRST_FUNCTION:=====================://
-    void 
-    aac2020_phexdum_c11_file_Halt( const char* msg_err )
-    {
-        printf("[PHEXDUM_C11_FATAL_ERROR]:%s\n", msg_err );
-        fflush(stdout);
-        exit( 202 );
-    }
-//:=====================:HALT_IS_TYPICALLY_THE_FIRST_FUNCTION://
-//:LOG_AFTER_HALT:===========================================://
-#define P_F printf
-#define FLU fflush 
-
-    void
-    aac2020_phexdum_c11_Info_any(
-        const char* str_fmt
-    ,   void*       dat_any   
-    )
-    { 
-        if( AAC2020_PHEXDUM_STAND_ALONE_ONLY_LOGGING_ON >= 1 ){
-            /** Same Line As Next Printf **/
-            P_F("[phexdum_c11_log]....(   " ); FLU( stdout );
-            P_F( str_fmt , dat_any          ); FLU( stdout );
-            P_F(               "   )\n"     ); FLU( stdout );
-        };;
-    }
-
-#undef P_F
-#undef FLU
-//:===========================================:LOG_AFTER_HALT://
+//:=========================================:INCLUDES_SECTION://
 //:MAIN_SECTION:=============================================://
-#define CHR const char                        //:-------: 01 ://
-#define I32 int32_t /** GCC: <stdint.h> **/   //:-------: 02 ://
-#define CMD PHEXDUM_CMDLINE_FUNCTION          //:-------: 03 ://
-#define ERR aac2020_phexdum_c11_file_Halt     //:-------: 04 ://
-#define LOG aac2020_phexdum_c11_Info_any      //:-------: 05 ://
+#define CHR    char                              //:----: 01 ://
+#define I32 int32_t /** GCC: <stdint.h> **/      //:----: 02 ://
 
-    I32 main(I32 arg_cou, char** arg_arr)
+    I32 main(I32 arg_cou, CHR** arg_arr)
     {
-    LOG("[main:BEG]",0);
+        I32
+        result_of_calling_main=(
+        AAC2020_PHEXDUM_StandAloneMain(
+            arg_cou
+        ,   arg_arr
+        ));;
 
-        //:declare_vars:-------------------------------------://
-
-            /** Inputs And Outputs For Command Line **/
-
-            CHR* cmdname ; /** cmd: Command To Execute ......**/
-            CHR* fip_inn ; /** File Path Inn  ...............**/
-            CHR* fip_out ; /** File Path Out  ...............**/
-            CHR* tex_out ; /** Output text    ...............**/
-            I32  tex_out_freeable ; /** freeable pointer?    **/
-
-            /**  Sanitized Command Enumeration **/
-            /**  And corresponding jump table  **/
-
-            I32  cmdenum       =(   0   ); // <--CMD:ENUMERATION 
-            CMD* cmdjump[ 4+1 ]={   0   }; // <--CMD:JUMP_TABLE 
-            CMD* cmdfunc       =((CMD*)0); // <--CMD:FUNCTION 
-            
-        //:-------------------------------------:declare_vars://
-        //:default_values:-----------------------------------://
-
-            fip_out =( AAC2020_PHEXDUM_DEFAULT_fip_out );
-            tex_out =( AAC2020_PHEXDUM_DEFAULT_tex_out );
-            tex_out_freeable =( 0 );
-
-        //:-----------------------------------:default_values://
-
-        if( 0 == (arg_cou - 1) /** 0 user arguments **/ ){
-
-            CHR* error_output_text_message=(
-                "[ZERO_ARGS:WANTED:2_OR_3]\n\0"
-            );;
-            tex_out = ( error_output_text_message );
-
-        }else
-        if( 1 == ( arg_cou - 1) /** 1 user argument(s) **/ ){
-
-            CHR* error_output_text_message=(
-                "[ONE_ARGUMENT:WANTED:2_OR_3]\n\0"
-            );;
-            tex_out = ( error_output_text_message );
-
-        }else
-        if( 0
-        ||  2 == (arg_cou - 1) /** 2 user arguments **/
-        ||  3 == (arg_cou - 1) /** 3 user arguments **/
-        ){  
-
-            cmdname =( arg_arr[ 1 ] ); /** command      **/
-            fip_inn =( arg_arr[ 2 ] ); /** FIlePath:INN **/
-            
-
-            if( ( arg_cou - 1 ) >=  3 ){
-            #define STR_CMP aac2020_phexdum_StrCmp
-                fip_out =( arg_arr[ 3 ] );
-
-                /** rbsrbs: my_stricmp Kappa **/
-                if( 0 == STR_CMP( fip_inn , fip_out ) ){
-
-                    /** ************************************ **/
-                    /** Really we could just exit. But that  **/
-                    /** to me implies a fatal error rather   **/
-                    /** than an error that should be         **/
-                    /** gracefully recovered from.           **/
-                    /** ************************************ **/
-                    printf( "[FILE_NAMES_MATCH]\n" );
-                    fflush(stdout);
-                    return( 1 );
-                };;
-            #undef  STR_CMP
-            };;
-
-            //:call_function_from_jump_table:================://
-            #define JMP cmdjump
-
-            LOG("[ABOUT_TO_CALL:::::::cmdname_CTO_cmdenum]",0);
-            cmdenum=( AAC2020_PHEXDUM_cmdname_CTO_cmdenum(
-                                      cmdname ));;
-            LOG("[ABOUT_TO_CALL:::::::cmdname_CTO_cmdfunc]",0);
-            cmdfunc=( AAC2020_PHEXDUM_cmdname_CTO_cmdfunc(
-                                      cmdname ));;
-
-            LOG("[ABOUT_TO_POPULATE_JUMP_TABLE]",0);
-            assert( cmdenum >= 0 && cmdenum <= 4 );
-            JMP[ 0 ]=(AAC2020_PHEXDUM_CMD_NothingFound        );
-            JMP[ 1 ]=(AAC2020_PHEXDUM_CMD_pngfile_CTO_c99text );
-            JMP[ 2 ]=(AAC2020_PHEXDUM_CMD_c99text_CTO_pngfile );
-            JMP[ 3 ]=(AAC2020_PHEXDUM_CMD_pngfile_CTO_naktext );
-            JMP[ 4 ]=(AAC2020_PHEXDUM_CMD_naktext_CTO_pngfile );
-      
-            /** Execute proper function **/
-            
-            if( 1
-            &&  cmdenum >= 0
-            &&  cmdenum <= 4 
-            ){
-                if( ((CMD*)0)==cmdfunc ){
-
-                    tex_out =("[ERR:NULL_CMDFUNC_POINTER]\0");
-
-                }else{
-                    
-                    LOG("[ABOUT_TO_ASSERT_JMP_cmdenum]",0);
-                    assert(       JMP[ cmdenum ] == cmdfunc );
-
-                    LOG("[ABOUT_TO_CALL_JMMP_cmdenum]",0);
-                    tex_out = ( ( JMP[ cmdenum ] )( fip_inn ) );
-                    tex_out_freeable=( 1 );
-                };;
-
-            }else{
-
-                tex_out = "[INVALID_ENUM_WHATEVER]" ;
-    
-            };;
-
-            #undef  JMP
-            //:================:call_function_from_jump_table://
-
-        }else{
-
-            tex_out =( AAC2020_PHEXDUM_DEFAULT_tex_out );
-
-        };;
-
-        //:save_text_to_output_file:=========================://
-        #define N_S ((CHR*)0)
-        LOG("[save_text_to_output_file:BEG]",0);
-
-            if( ((CHR*)0) == tex_out ){
-                ERR("[NULL_OUTPUT_TEXT_SHOULD_NEVER_HAPPEN]");
-            }else{
-            
-                I32 str_len=( 0-777 );
-                
-                if( N_S == fip_out ){ ERR("[NIL:fip_out]"); };
-                if( N_S == tex_out ){ ERR("[NIL:tex_out]"); };
-                str_len = strlen( tex_out );
-                if( str_len <= 0   ){ ERR("[LEN:str_len]"); };
-
-                printf( tex_out );
-                fflush(stdout);
-                
-                if( fip_out == fip_inn ){
-                    ERR("[AAC2020_PHEXDUM:INN_IS_OUT]");
-                };;
-                
-                AAC2020_PHEXDUM_SaveFile_TXT( 
-                    fip_out //:<--[ NameOfFile( nof_wex )  ]
-                ,   tex_out //:<--[ Text To Save To File   ]
-                ,   str_len //:<--[ Length_Of_Text         ]
-                );;
-
-                /** *******************************************/
-                /** @VID_IID[ 0121 ]TIME[ 07:26:42 ]    **** **/
-                /** Hard coded strings are NOT freeable.**** **/
-                /** *******************************************/
-                #define NON_CONST_CHR char
-
-                    if(       tex_out_freeable >= 1 ){
-                        free( (NON_CONST_CHR*)tex_out );
-                    };;
-
-                #undef  NON_CONST_CHAR
-                /** **************************************** **/
-
-            };;
-
-        LOG("[save_text_to_output_file:END]",0);
-        #undef  N_S
-        //:=========================:save_text_to_output_file://
-    LOG("[main:END]",0);
+        return( result_of_calling_main );
     }
     
 #undef  CHR  //:----------------------------------------: 01 ://
 #undef  I32  //:----------------------------------------: 02 ://
-#undef  CMD  //:----------------------------------------: 03 ://
-#undef  ERR  //:----------------------------------------: 04 ://
-#undef  LOG  //:----------------------------------------: 05 ://
 //:=============================================:MAIN_SECTION://
