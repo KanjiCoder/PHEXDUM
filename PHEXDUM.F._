@@ -325,11 +325,12 @@
     //:===========================================:TOUCH_FILE://
     //:SAVE_TXT_FILE_TO_DISK:================================://
     //:SAVE_C99_FILE_TO_DISK:================================://
-    #define I32  int32_t /** GCC: <stdint.h> **/      //: 01 ://
-    #define U32 uint32_t /** GCC: <stdint.h> **/      //: 02 ://
-    #define CHR const char                            //: 03 ://
-    #define LOG aac2020_phexdum_Info_any              //: 04 ://
-    #define ERR aac2020_phexdum_Halt                  //: 05 ://
+    #define U08  uint8_t /** GCC: <stdint.h> **/      //: 01 ://
+    #define I32  int32_t /** GCC: <stdint.h> **/      //: 02 ://
+    #define U32 uint32_t /** GCC: <stdint.h> **/      //: 03 ://
+    #define CHR const char                            //: 04 ://
+    #define LOG aac2020_phexdum_Info_any              //: 05 ://
+    #define ERR aac2020_phexdum_Halt                  //: 06 ://
 
         I32
         AAC2020_PHEXDUM_SaveFile_TXT(
@@ -446,7 +447,7 @@
         //: - - - - - - - - - - - -- - - - - - - - - - - - - ://
 
         I32
-        AAC2020_PHEXDUM_SaveFile_PNG(
+        AAC2020_PHEXDUM_SaveFile_U08(
             CHR* nof_wex /** NameOfFile__WithEXtension   ....**/
         ,   U08* arr_u08 /** String To Save To Disk .........**/
         ,   U32  arr_len /** Num Chars In chr_arr   .........**/
@@ -474,11 +475,12 @@
 
         //: - - - - - - - - - - - -- - - - - - - - - - - - - ://
 
-    #undef  I32  //:------------------------------------: 01 ://
-    #undef  U32  //:------------------------------------: 02 ://
-    #undef  CHR  //:------------------------------------: 03 ://
-    #undef  LOG  //:------------------------------------: 04 ://
-    #undef  ERR  //:------------------------------------: 05 ://
+    #undef  U08  //:------------------------------------: 01 ://
+    #undef  I32  //:------------------------------------: 02 ://
+    #undef  U32  //:------------------------------------: 03 ://
+    #undef  CHR  //:------------------------------------: 04 ://
+    #undef  LOG  //:------------------------------------: 05 ://
+    #undef  ERR  //:------------------------------------: 06 ://
     //:================================:SAVE_C99_FILE_TO_DISK://
     //:================================:SAVE_TXT_FILE_TO_DISK://
     //:SAVE_PNG_FILE_TO_DISK:================================://
@@ -880,11 +882,118 @@
 //:==========================================================://
 //:||||||||||||||||||||||||||||||||||:FILE_READ_WRITE_SECTION://
 //:==========================================================://
+//:FILE_ACCESS_WRAPPER_METHODS:==============================://
+#define BIN AAC2020_PHEXDUM_P_T_PNGFILE               //: 01 ://
+#define I32  int32_t /** GCC: <stdint.h> **/          //: 02 ://
+#define U32 uint32_t /** GCC: <stdint.h> **/          //: 03 ://
+#define U08  uint8_t /** GCC: <stdint.h> **/          //: 04 ://
+#define CHR const char                                //: 05 ://
+
+    U32
+    AAC2020_PHEXDUM_LoadFile_U08(
+        CHR*         nof_wex //:AKA[ fip_inn ]
+    ,   U08*  *BYREF_u08_arr //:DESTINATION
+    ,   I32   *BYREF_u08_len //:Number_Of_Bytes_In:fil_mem
+    )
+    {
+        //:check_inputs:-------------------------------------://
+        assert( strlen(nof_wex) >= 3 ); //:[O.0]
+
+        assert( ((U08**)0) !=( BYREF_u08_arr ) );
+        assert( ((I32* )0) !=( BYREF_u08_len ) );
+
+        assert( ((U08* )0) ==(*BYREF_u08_arr ) );
+        assert( ((I32  )0) ==(*BYREF_u08_len ) );
+        //:-------------------------------------:check_inputs://
+        //:load_file:----------------------------------------://
+            U32 useless_return_value_because_not_implemented=(
+            AAC2020_PHEXDUM_LoadFileIfExists(
+                      nof_wex //: AKA[ fip_inn       ]
+            ,             BIN //: Loading Binary File
+            ,   BYREF_u08_arr //: AKA[ BYREF_fil_mem ]
+            ,   BYREF_u08_len //: AKA[ BYREF_fil_nob ]
+            ));;
+    
+        //:----------------------------------------:load_file://
+
+        /** @VID_IID[ 0127 ]TIME[ 02:21:23 ] *************** **/
+        /** Make it obvious that return value is not used.   **/
+        /** A non-zero flag would be nice for when there is  **/
+        /** a failure to load.                               **/
+        return( useless_return_value_because_not_implemented );
+    }
+
+#undef  BIN  //:----------------------------------------: 01 ://
+#undef  I32  //:----------------------------------------: 02 ://
+#undef  U32  //:----------------------------------------: 03 ://
+#undef  U08  //:----------------------------------------: 04 ://
+#undef  CHR  //:----------------------------------------: 05 ://
+//:==============================:FILE_ACCESS_WRAPPER_METHODS://
 //:HELPER_FUNCTIONS_I_DIDNT_REALIZE_I_NEEDED:================://
+//:U32_ARR_TO_U08_ARR:=======================================://
+//:U08_ARR_TO_U32_ARR:=======================================://
 #define I32  int32_t /** GCC: <stdint.h> **/          //: 01 ://
 #define U32 uint32_t /** GCC: <stdint.h> **/          //: 02 ://
 #define U08  uint8_t /** GCC: <stdint.h> **/          //: 03 ://
+    //: - - - - - - - - - - - - ---- - - - - - - - - - - - - ://
+    void
+    AAC2020_PHEXDUM_u08_arr_CTO_u32_arr(
+        U08*        u08_arr  //:<--------------ARR_DAT
+    ,   I32         u08_len  //:<--------------ARR_LEN
+    ,   U32*             *BYREF_u32_arr //:<-- ARR_DAT
+    ,   I32              *BYREF_u32_len //:<-- ARR_LEN
+    )
+    {
+        //:input_checks:-------------------------------------://
+        assert( ((U08* )0) !=         u08_arr  ); //:INN_PUTS
+        assert( (       0) >=         u08_len  ); //:INN_PUTS
+ 
+        assert( ((U32**)0) !=   BYREF_u32_arr  ); //:OUT_PUTS
+        assert( ((I32* )0) !=   BYREF_u32_len  ); //:OUT_PUTS
+ 
+        assert( ((U32* )0) ==( *BYREF_u32_arr) ); //:OUT_PUTS
+        assert( ((I32  )0) ==( *BYREF_u32_len) ); //:OUT_PUTS
+        //:-------------------------------------:input_checks://
+        //:declare_and_allocate_vars:------------------------://
 
+            U32* u32_arr = calloc( u08_len/4 , sizeof( U32 ) );
+            I32  u32_len =       ( u08_len/4 );
+
+            I32  u32_dex ;                 /** u32_dex / u_d **/
+            I32  u32_m_i =( u32_len - 1 ); /** u32_m_i / m_i **/
+            I32      b_o ;                 /** base offset   **/
+
+        //:------------------------:declare_and_allocate_vars://
+        //:CORE_LOGIC_OF_FUNCTION:===========================://
+        #define INN u08_arr
+        #define OUT u32_arr
+        for( u32_dex = 0 ; u32_dex <= u32_m_i ; u32_dex++ ){
+
+            /** #_NETWORK_BYTE_ORDER_# **/
+
+            b_o = ( u32_dex * 4            );
+            assert( u32_dex * 4 ==     b_o );
+            assert(     b_o / 4 == u32_dex );
+
+            OUT[ u32_dex ]=( ((U32)0x00000000)
+            |   ( INN[ b_o + 0 ] << 24 )  
+            |   ( INN[ b_o + 1 ] << 16 )  
+            |   ( INN[ b_o + 2 ] <<  8 )  
+            |   ( INN[ b_o + 3 ] <<  0 )  
+            );;
+
+        };;
+        #undef  INN
+        #undef  OUT
+        //:===========================:CORE_LOGIC_OF_FUNCTION://
+        //:return_via_output_params:-------------------------://
+
+            (*BYREF_u32_arr)=( u32_arr );
+            (*BYREF_u32_len)=( u32_len );
+
+        //:-------------------------:return_via_output_params://
+    }
+    //: - - - - - - - - - - - - ---- - - - - - - - - - - - - ://
     void
     AAC2020_PHEXDUM_u32_arr_CTO_u08_arr(
         U32*        u32_arr  //:<--------------ARR_DAT
@@ -894,12 +1003,14 @@
     )
     {
         //:input_checks:-------------------------------------://
-        assert( ((U32*)0) !=         u32_arr  ); //:INN_PUTS
-        assert( (      0) >=         u32_len  ); //:INN_PUTS
-        assert( ((U08*)0) !=   BYREF_u08_arr  ); //:OUT_PUTS
-        assert( ((I32*)0) !=   BYREF_u08_len  ); //:OUT_PUTS
-        assert( ((I32*)0) ==( *BYREF_u08_arr) ); //:OUT_PUTS
-        assert( ((I32*)0) ==( *BYREF_u08_len) ); //:OUT_PUTS
+        assert( ((U32* )0) !=         u32_arr  ); //:INN_PUTS
+        assert( (       0) >=         u32_len  ); //:INN_PUTS
+
+        assert( ((U08**)0) !=   BYREF_u08_arr  ); //:OUT_PUTS
+        assert( ((I32* )0) !=   BYREF_u08_len  ); //:OUT_PUTS
+
+        assert( ((U08* )0) ==( *BYREF_u08_arr) ); //:OUT_PUTS
+        assert( ((I32  )0) ==( *BYREF_u08_len) ); //:OUT_PUTS
         //:-------------------------------------:input_checks://
         //:declare_and_allocate_vars:------------------------://
 
@@ -913,26 +1024,30 @@
             /** u32_m_i == max index of uint32 array         **/
             /** ******************************************** **/
 
-            I32      u_d ;                 /** u32_dex       **/
+            I32  u32_dex ;                 /** u32_dex / u_d **/
             I32  u32_m_i =( u32_len - 1 ); /** u32_m_i / m_i **/
-
+            I32      b_o ; /** Base Offset **/
         //:------------------------:declare_and_allocate_vars://
         //:CORE_LOGIC_OF_FUNCTION:===========================://
         #define INN u32_arr
         #define OUT u08_arr
-        for( u_d = 0 ; u_d <= u32_m_i ; u_d++ ){
+        for( u32_dex = 0 ; u32_dex <= u32_m_i ; u32_dex++ ){
 
             /** ******************************************** ***
-            Network Byte Order:
+            #_NETWORK_BYTE_ORDER_#:
             [     0x01020304        ,        0x05060708     ]
             [ 01 , 02 , 03 , 04     ,     05 , 06 , 07 , 07 ]
             @VID_IID[ 0127 ]TIME[ 00:34:23 ]         
+            @VID_IID[ 0127 ]TIME[ 01:38:50 ]FIXED_ALGORITHM
             *** ******************************************** **/
+        
+            b_o = (         4  * u32_dex );
+            assert(   b_o / 4 == u32_dex );
 
-            OUT[ bas + 0 ]=( ( INN[ u_d*4 ] >> 24 ) & 0xFF );
-            OUT[ bas + 1 ]=( ( INN[ u_d*4 ] >> 16 ) & 0xFF );
-            OUT[ bas + 2 ]=( ( INN[ u_d*4 ] >>  8 ) & 0xFF );
-            OUT[ bas + 3 ]=( ( INN[ u_d*4 ] >>  0 ) & 0xFF );
+            OUT[ b_o + 0 ]=( ( INN[ u32_dex ] >> 24 ) & 0xFF );
+            OUT[ b_o + 1 ]=( ( INN[ u32_dex ] >> 16 ) & 0xFF );
+            OUT[ b_o + 2 ]=( ( INN[ u32_dex ] >>  8 ) & 0xFF );
+            OUT[ b_o + 3 ]=( ( INN[ u32_dex ] >>  0 ) & 0xFF );
 
         };;
         #undef  INN
@@ -945,10 +1060,12 @@
 
         //:-------------------------:return_via_output_params://
     }
-
+    //: - - - - - - - - - - - - ---- - - - - - - - - - - - - ://
 #undef  I32  //:----------------------------------------: 01 ://
 #undef  U32  //:----------------------------------------: 02 ://
 #undef  U08  //:----------------------------------------: 03 ://
+//:=======================================:U32_ARR_TO_U08_ARR://
+//:=======================================:U08_ARR_TO_U32_ARR://
 //:================:HELPER_FUNCTIONS_I_DIDNT_REALIZE_I_NEEDED://
 //:PRIVATE_API_HELPER_FUNCTIONS:=============================://
 #define I32    int32_t /** GCC: <stdint.h> **/        //: 01 ://
@@ -2385,55 +2502,65 @@
 #undef  PAY  //:----------------------------------------: 06 ://
 //:=============================================:MAIN_SECTION://
 //:UNIT_TEST_SECTION:========================================://
-#define U32 uint32_t /** GCC: <stdint.h> **/
+#define I32  int32_t  /** GCC: <stdint.h>     **/     //: 01 ://
+#define U32 uint32_t  /** GCC: <stdint.h>     **/     //: 02 ://
+#define U08  uint8_t  /** GCC: <stdint.h>     **/     //: 03 ://
+#define ERR aac2020_phexdum_Halt                      //: 04 ://
+#define A_4 ( 4 )     /** Arguments,4 of them **/     //: 05 ://
 
     U32
     AAC2020_PHEXDUM_UnitTest( U32 u32 )
     {
+    #define U32_ARR_LEN ( 187 )
+
         if( u32 ){ /** NOOP **/ };
 
         //: #error TODO____U32_DATA_CONVERT_TO_BYTE_ARRAY
+        
+        assert( 187 == ( ( 37 * 5 ) + 2 ) );
+        assert( 187 == U32_ARR_LEN );
 
-        U32 
-        u32_arr={ /** DEKTEN_LOGO_PNG_BINARY_AS_UINT32_ARRAY **/
-          0x89504E47,0x0D0A1A0A,0x0000000D,0x49484452,0x000000C8
-        , 0x000000C8,0x08020000,0x00223A39,0xC9000002,0xB2494441
-        , 0x5478DAED,0xDC216F53,0x511880E1,0x0F52C4B2,0x4D2C1535
-        , 0x5C42DA04,0x8140D5CD,0xA12B972A,0xFE000916,0x4DD02049
-        , 0xF607504D,0x65150257,0x57D30A04,0x496F168A,0xA9B8A968
-        , 0x97090CCD,0x3CE29C6C,0x3777E579,0xA6BF7C3D,0xA76F7ACD
-        , 0xCD220000,0x00000000,0x00000000,0xF8BF3CCA,0x1B1B0E87
-        , 0xED76BBC9,0x075B3D5D,0x4D0693E4,0xB12AE275,0xD6BEEF11
-        , 0xE9F73198,0x0C8ADF45,0x93AFB1AA,0xAAD16894,0x31D8CADB
-        , 0xB7AFAAD3,0xE934F946,0x76CF76F1,0x2A7D6C9D,0xBBEF6544
-        , 0xFA7D9C2D,0xCE3A7F1A,0x7D8DD91E,0xFBD14658,0x080B6181
-        , 0xB01016C2,0x0261212C,0x8405C242,0x58080B84,0x85B01016
-        , 0xDC89569D,0xCB66B3D9,0x6AB5AA67,0xD7F6641B,0xDFD2C76E
-        , 0x72F7BD8B,0x384A1E9A,0x96D3C56E,0x51CF8514,0x45D1EFF7
-        , 0x0F33AC7D,0x55F3F9BC,0xBE7DD31A,0xCF36CE19,0x2AF77F35
-        , 0xAA332C8F,0x428485B0,0x1016080B,0x61212C10,0x16C24258
-        , 0x202C8485,0xB0405808,0x0B61C1DD,0x681DECC9,0x9E475CA4
-        , 0x4F5D475C,0x66AD7B1B,0x719C3E35,0x8EB812D6,0xC3F222E2
-        , 0x53FAD43A,0x37AC0F39,0xFF833416,0x071B9647,0x21C24258
-        , 0x080B8485,0xB0101608,0x0B61212C,0x1016C242,0x58202C84
-        , 0x85B04058,0x080B6181,0xB01016C2,0x0261212C,0x8405C242
-        , 0x58080B84,0x85B01016,0x080B6121,0x2C1016C2,0x4258202C
-        , 0x8485B040,0x58080B61,0x81B01016,0xC2026121,0x2C8405C2
-        , 0x4258080B,0x8485B010,0x16080B61,0x212C1016,0xC2425820
-        , 0x2C8485B0,0x4058080B,0x6181B010,0x16C20261,0x212C8405
-        , 0xC2425808,0x0B8485B0,0x1016080B,0x61212C10,0x16C24258
-        , 0x202C8485,0xB01016DC,0x83D6C19E,0xEC67C4FB,0xF4A9EBDC
-        , 0x751F238E,0xB33EA4B0,0x1E98AB88,0xCF35AEBB,0xF423E551
-        , 0x88B01016,0x080B6121,0x2C1016C2,0x4258202C,0x8485B040
-        , 0x58080B61,0x212CB807,0xB5BEE857,0x14456DBB,0xB627DBB2
-        , 0x5B268FDD,0x448CB3F6,0x5D441C25,0x0F75CBEE,0xE9EEF4F0
-        , 0x2EBFEEB0,0xFAB7EAD9,0xB5EC2DCB,0x37E961AD,0x73C3FA12
-        , 0xD1491E3A,0xFF7ADE5B,0xF63C0A41,0x58080B61,0x81B01016
-        , 0xC2026121,0x2C8405C2,0x4258080B,0x8485B010,0x16FC53E6
-        , 0x8B7E5555,0x35FC609B,0x279B5864,0x1C2C77DF,0x8FDB9704
-        , 0x533FE4AF,0xCD7ABD6E,0xF23536FF,0x8B060000,0x00000000
-        , 0x000000A0,0x21FE027A,0x005E3A1C,0x53775400,0x00000049
-        , 0x454E44AE,0x42608200
+        I32 u32_len=(U32_ARR_LEN );
+        U32 u32_arr[ U32_ARR_LEN ]={ 
+          /** DEKTEN_LOGO_PNG_BINARY_AS_UINT32_ARRAY **/
+/* 01 */  0x89504E47,0x0D0A1A0A,0x0000000D,0x49484452,0x000000C8
+/* 02 */, 0x000000C8,0x08020000,0x00223A39,0xC9000002,0xB2494441
+/* 03 */, 0x5478DAED,0xDC216F53,0x511880E1,0x0F52C4B2,0x4D2C1535
+/* 04 */, 0x5C42DA04,0x8140D5CD,0xA12B972A,0xFE000916,0x4DD02049
+/* 05 */, 0xF607504D,0x65150257,0x57D30A04,0x496F168A,0xA9B8A968
+/* 06 */, 0x97090CCD,0x3CE29C6C,0x3777E579,0xA6BF7C3D,0xA76F7ACD
+/* 07 */, 0xCD220000,0x00000000,0x00000000,0xF8BF3CCA,0x1B1B0E87
+/* 08 */, 0xED76BBC9,0x075B3D5D,0x4D0693E4,0xB12AE275,0xD6BEEF11
+/* 09 */, 0xE9F73198,0x0C8ADF45,0x93AFB1AA,0xAAD16894,0x31D8CADB
+/* 10 */, 0xB7AFAAD3,0xE934F946,0x76CF76F1,0x2A7D6C9D,0xBBEF6544
+/* 11 */, 0xFA7D9C2D,0xCE3A7F1A,0x7D8DD91E,0xFBD14658,0x080B6181
+/* 12 */, 0xB01016C2,0x0261212C,0x8405C242,0x58080B84,0x85B01016
+/* 13 */, 0xDC89569D,0xCB66B3D9,0x6AB5AA67,0xD7F6641B,0xDFD2C76E
+/* 14 */, 0x72F7BD8B,0x384A1E9A,0x96D3C56E,0x51CF8514,0x45D1EFF7
+/* 15 */, 0x0F33AC7D,0x55F3F9BC,0xBE7DD31A,0xCF36CE19,0x2AF77F35
+/* 16 */, 0xAA332C8F,0x428485B0,0x1016080B,0x61212C10,0x16C24258
+/* 17 */, 0x202C8485,0xB0405808,0x0B61C1DD,0x681DECC9,0x9E475CA4
+/* 18 */, 0x4F5D475C,0x66AD7B1B,0x719C3E35,0x8EB812D6,0xC3F222E2
+/* 19 */, 0x53FAD43A,0x37AC0F39,0xFF833416,0x071B9647,0x21C24258
+/* 20 */, 0x080B8485,0xB0101608,0x0B61212C,0x1016C242,0x58202C84
+/* 21 */, 0x85B04058,0x080B6181,0xB01016C2,0x0261212C,0x8405C242
+/* 22 */, 0x58080B84,0x85B01016,0x080B6121,0x2C1016C2,0x4258202C
+/* 23 */, 0x8485B040,0x58080B61,0x81B01016,0xC2026121,0x2C8405C2
+/* 24 */, 0x4258080B,0x8485B010,0x16080B61,0x212C1016,0xC2425820
+/* 25 */, 0x2C8485B0,0x4058080B,0x6181B010,0x16C20261,0x212C8405
+/* 26 */, 0xC2425808,0x0B8485B0,0x1016080B,0x61212C10,0x16C24258
+/* 27 */, 0x202C8485,0xB01016DC,0x83D6C19E,0xEC67C4FB,0xF4A9EBDC
+/* 28 */, 0x751F238E,0xB33EA4B0,0x1E98AB88,0xCF35AEBB,0xF423E551
+/* 29 */, 0x88B01016,0x080B6121,0x2C1016C2,0x4258202C,0x8485B040
+/* 30 */, 0x58080B61,0x212CB807,0xB5BEE857,0x14456DBB,0xB627DBB2
+/* 31 */, 0x5B268FDD,0x448CB3F6,0x5D441C25,0x0F75CBEE,0xE9EEF4F0
+/* 32 */, 0x2EBFEEB0,0xFAB7EAD9,0xB5EC2DCB,0x37E961AD,0x73C3FA12
+/* 33 */, 0xD1491E3A,0xFF7ADE5B,0xF63C0A41,0x58080B61,0x81B01016
+/* 34 */, 0xC2026121,0x2C8405C2,0x4258080B,0x8485B010,0x16FC53E6
+/* 35 */, 0x8B7E5555,0x35FC609B,0x279B5864,0x1C2C77DF,0x8FDB9704
+/* 36 */, 0x533FE4AF,0xCD7ABD6E,0xF23536FF,0x8B060000,0x00000000
+/* 37 */, 0x000000A0,0x21FE027A,0x005E3A1C,0x53775400,0x00000049
+/* 38 */, 0x454E44AE,0x42608200
         };;
 
         //:save_hard_coded_data_as_png_file:-----------------://
@@ -2447,61 +2574,138 @@
 
             AAC2020_PHEXDUM_u32_arr_CTO_u08_arr(
                             u32_arr 
+            ,               u32_len
             ,                         &(u08_arr)
             ,                         &(u08_len)
             );;
 
+            //:###:_Intermission:----------------------------://
+            /**///:make_sure_u32_to_u08_works:---------------://
+            /**/
+            /**/    U32* u32_arr_chk =((U32*)0);
+            /**/    I32  u32_len_chk =(      0);
+            /**/
+            /**/    AAC2020_PHEXDUM_u08_arr_CTO_u32_arr(
+            /**/                    u08_arr 
+            /**/    ,               u08_len
+            /**/    ,                         &(u32_arr_chk)
+            /**/    ,                         &(u32_len_chk)
+            /**/    );;
+            /**/
+            /**/    if( u32_len != u32_len_chk ){
+            /**/        ERR("[CONVERTER_FAIL[U32<==>U08]001]");
+            /**/    };;
+            /**/    for( I32 i = 0 ; i < u32_len ; i++ ){
+            /**/        if( u32_arr_chk[ i ]
+            /**/        !=  u32_arr[     i ]
+            /**/        ){
+            /**/            ERR("[FAIL:2021_02_05:1002PM]");
+            /**/        };;
+            /**/    };;
+            /**/
+            /**///:---------------:make_sure_u32_to_u08_works://
+            //:----------------------------:###:_Intermission://
+
             //:003: Save_PNG_Bytes_To_Png_File:..............://
 
-            AAC2020_PHEXDUM_SaveFile_PNG(
-                "UTC.PNG"    /** NameOfFile__WithEXtension   **/
+            AAC2020_PHEXDUM_SaveFile_U08(
+                "001.PNG"    /** NameOfFile__WithEXtension   **/
             ,    u08_arr     //:[  arr_u08  / u08_arr  ]://
             ,    u08_len     //:[  arr_len  / len_arr  ]://
-            ){
+            );;
 
         //:-----------------:save_hard_coded_data_as_png_file://
         //:convert_png_on_disk_to_text_hex_dump:-------------://
 
-            #define ARG_COU ( 4 )
-            char* arg_arr_001[ ARG_COU ]={
+            char* arg_arr_001[ A_4 ]={
                 "[IGNORE_FIRST_ARG_NOT_USER_SUPPLIED]"
             ,   "png_cto_nak"
-            ,   "UTC.PNG"
-            ,   "UTC.TXT"
+            ,   "001.PNG"
+            ,   "001.TXT"
             };;
-            #undef  ARG_COU
             AAC2020_PHEXDUM_StandAloneMain(
-                ARG_COU
-            ,   arg_arr_001
-            );;
+                A_4 , arg_arr_001          );;
 
         //:-------------:convert_png_on_disk_to_text_hex_dump://
+        //:convert_text_hex_dump_back_to_png_file:-----------://
+
+            char* arg_arr_002[ A_4 ]={
+                "[IGNORE_FIRST_ARG_NOT_USER_SUPPLIED]"
+            ,   "nak_cto_png"
+            ,   "001.TXT"
+            ,   "002.PNG"
+            };;
+            AAC2020_PHEXDUM_StandAloneMain(
+                A_4 , arg_arr_002          );;
         
-    ////
-    ////    #error : TODO: Delete "UTC.PNG" here.
-    ////
-    ////    #define ARG_COU ( 4 )
-    ////    char* arg_arr_002[ ARG_COU ]={
-    ////        "[IGNORE_FIRST_ARG_NOT_USER_SUPPLIED]"
-    ////    ,   "nak_cto_png"
-    ////    ,   "UTC.TXT"
-    ////    ,   "UTC.PNG"
-    ////    };;
-    ////    #undef  ARG_COU
-    ////    AAC2020_PHEXDUM_StandAloneMain(
-    ////        ARG_COU
-    ////    ,   arg_arr_002
-    ////    );;
-    ////
-    ////    #error 1: LoadFileIntoMemory
-    ////    #error 2: Convert u08 memory into u32 memory
-    ////    #error 3: Compare u08 memory with original array
-    ////              declared in top of test.
-    ////
-    ////
+        //:-----------:convert_text_hex_dump_back_to_png_file://
+        //:load_png_file_on_disk_into_ram:-------------------://
+
+            U08* got_arr =((U08*)0);
+            I32  got_len =(      0);
+
+            AAC2020_PHEXDUM_LoadFile_U08(
+                "002.PNG"    /** NameOfFile__WithEXtension   **/
+            ,  &(got_arr)    //:[  arr_u08  / u08_arr  ]://
+            ,  &(got_len)    //:[  arr_len  / len_arr  ]://
+            );;
+
+        //:-------------------:load_png_file_on_disk_into_ram://
+        //:both_arrays_should_be_identical:------------------://
+        for( I32 i = 0 ; i < u08_len ; i ++ ){
+
+            if( u08_arr[ i ] 
+            !=  got_arr[ i ]
+            ){
+                ERR("[FILE_ON_DISK_NO_MATCH_FILE_ON_RAM]");
+            };;
+        };;
+        //:-------------------both_arrays_should_be_identical://
+        //:overkill_check:-----------------------------------://
+
+            U32* got_arr_chk=((U32*)0);
+            I32  got_len_chk=(      0);
+
+            AAC2020_PHEXDUM_u08_arr_CTO_u32_arr(
+                            got_arr 
+            ,               got_len
+            ,                         &(got_arr_chk)
+            ,                         &(got_len_chk)
+            );;
+
+            if( U32_ARR_LEN != got_len_chk ){
+
+                ERR("[BAD_LENGTH_CHECK:2021_02_05]");
+        
+            };;
+
+            for( I32 i = 0 ; i < U32_ARR_LEN ; i++ ){
+
+                if( u32_arr[     i ]
+                !=  got_arr_chk[ i ]
+                ){
+                    ERR("[COPYRIGHT:JohnMarkMadison:2021]");
+                };;
+            };;
+
+        //:-----------------------------------:overkill_check://
+        //:memory_cleanup:-----------------------------------://
+
+            free( u32_arr_chk ); u32_arr_chk=((U32*)0);
+            free( u08_arr     ); u08_arr    =((U08*)0);
+            free( got_arr     ); got_arr    =((U08*)0);
+            free( got_arr_chk ); got_arr_chk=((U32*)0);
+
+        //:-----------------------------------:memory_cleanup://
 
         return( 0x00 );
+
+    #undef  U32_ARR_LEN
     }
 
-#undef  U32
+#undef  I32  //:----------------------------------------: 01 ://
+#undef  U32  //:----------------------------------------: 02 ://
+#undef  U08  //:----------------------------------------: 03 ://
+#undef  ERR  //:----------------------------------------: 04 ://
+#undef  A_4  //:----------------------------------------: 05 ://
 //:========================================:UNIT_TEST_SECTION://

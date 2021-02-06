@@ -103,7 +103,7 @@
     //- C32 AAC2020_PHEXDUM_PAYLOAD_ENU_pngfile =( 0 - 1 );  -//
 
     enum 
-    AAC2020_PHEXDUM_payload_file_type {
+    AAC2020_PHEXDUM_payload_file_type /**( P_T )**/ {
         /** ************************************************ ***
         @VID_IID[ 0126 ]TIME[ 03:47:00 ]
         rbsrbs: yeah, it's mainly to avoid magic 

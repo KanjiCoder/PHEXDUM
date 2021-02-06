@@ -29,6 +29,8 @@ unsigned lodepng_encode32(
 
 //:VARIABLE_NAMES:===========================================://
 
+    nof_wex : NameOfFile____WithEXtension
+    fip_inn : FIlePath_INNput
     pay_err : PAYLOAD.ERROR , an error payload.
     err_pay : Backwards, you mean[ pay_err ].
               Yes it reads as better english as 
