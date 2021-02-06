@@ -79,6 +79,10 @@
 #define C32 const int32_t /** GCC: <stdint.h> **/     //: 04 ://
 #define I32       int32_t /** GCC: <stdint.h> **/     //: 05 ://
 
+    /** ror : ran or running ? **/
+    /** Has unit test been ran before? **/
+    U08 aac2020_phexdum_UTC_ror =( 0 );
+
     /** max number of synonyms **/
     #define AAC2020_PHEXDUM_SYN_NOE ( 11 )
 

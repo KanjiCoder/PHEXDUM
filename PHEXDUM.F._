@@ -935,6 +935,7 @@
 #define I32  int32_t /** GCC: <stdint.h> **/          //: 01 ://
 #define U32 uint32_t /** GCC: <stdint.h> **/          //: 02 ://
 #define U08  uint8_t /** GCC: <stdint.h> **/          //: 03 ://
+#define ERR aac2020_phexdum_Halt                      //: 04 ://
     //: - - - - - - - - - - - - ---- - - - - - - - - - - - - ://
     void
     AAC2020_PHEXDUM_u08_arr_CTO_u32_arr(
@@ -946,7 +947,11 @@
     {
         //:input_checks:-------------------------------------://
         assert( ((U08* )0) !=         u08_arr  ); //:INN_PUTS
-        assert( (       0) >=         u08_len  ); //:INN_PUTS
+        if( u08_len <= 0 ){
+
+            ERR("[BAD:u08_len:u08_arr_CTO_u32_arr]");
+
+        };;
  
         assert( ((U32**)0) !=   BYREF_u32_arr  ); //:OUT_PUTS
         assert( ((I32* )0) !=   BYREF_u32_len  ); //:OUT_PUTS
@@ -1004,7 +1009,11 @@
     {
         //:input_checks:-------------------------------------://
         assert( ((U32* )0) !=         u32_arr  ); //:INN_PUTS
-        assert( (       0) >=         u32_len  ); //:INN_PUTS
+        if( u32_len <= 0 ){
+
+            ERR("[BAD:u32_len:u32_arr_CTO_u08_arr]");
+
+        };;
 
         assert( ((U08**)0) !=   BYREF_u08_arr  ); //:OUT_PUTS
         assert( ((I32* )0) !=   BYREF_u08_len  ); //:OUT_PUTS
@@ -1064,6 +1073,7 @@
 #undef  I32  //:----------------------------------------: 01 ://
 #undef  U32  //:----------------------------------------: 02 ://
 #undef  U08  //:----------------------------------------: 03 ://
+#undef  ERR  //:----------------------------------------: 04 ://
 //:=======================================:U32_ARR_TO_U08_ARR://
 //:=======================================:U08_ARR_TO_U32_ARR://
 //:================:HELPER_FUNCTIONS_I_DIDNT_REALIZE_I_NEEDED://
@@ -2159,11 +2169,13 @@
 //:============================:COMMAND_LINE_HELPER_FUNCTIONS://
 //:MAIN_SECTION:=============================================://
 #define CHR const char                           //:----: 01 ://
-#define I32 int32_t /** GCC: <stdint.h> **/      //:----: 02 ://
-#define CMD        PHEXDUM_CMDLINE_FUNCTION      //:----: 03 ://
-#define ERR        aac2020_phexdum_Halt          //:----: 04 ://
-#define LOG        aac2020_phexdum_Info_any      //:----: 05 ://
-#define PAY struct AAC2020_PHEXDUM_payload       //:----: 06 ://
+#define U32 uint32_t /** GCC: <stdint.h> **/     //:----: 02 ://
+#define I32  int32_t /** GCC: <stdint.h> **/     //:----: 03 ://
+#define CMD        PHEXDUM_CMDLINE_FUNCTION      //:----: 04 ://
+#define ERR        aac2020_phexdum_Halt          //:----: 05 ://
+#define LOG        aac2020_phexdum_Info_any      //:----: 06 ://
+#define PAY struct AAC2020_PHEXDUM_payload       //:----: 07 ://
+#define EXT extern                               //:----: 08 ://
 
     I32 
     AAC2020_PHEXDUM_StandAloneMain(
@@ -2173,6 +2185,21 @@
     {
     LOG("[main:BEG]",0);
 
+        //:LazyUnitTest:-------------------------------------://
+        if( aac2020_phexdum_UTC_ror <= 0 ){
+        if( arg_cou                 <= 1 ){
+
+            /** Only call unit test if test has not been *** **/
+            /** ran before. ror == "ran or running"      *** **/
+
+            EXT U32 AAC2020_PHEXDUM_UnitTest( U32  );
+                    AAC2020_PHEXDUM_UnitTest( 0x00 );
+
+            printf("[LAZY_UNIT_TEST_HAS_RAN]\n");
+            fflush(stdout);
+
+        };;};;
+        //:-------------------------------------:LazyUnitTest://
         //:declare_vars:-------------------------------------://
 
             /** Inputs And Outputs For Command Line **/
@@ -2495,11 +2522,13 @@
     }
     
 #undef  CHR  //:----------------------------------------: 01 ://
-#undef  I32  //:----------------------------------------: 02 ://
-#undef  CMD  //:----------------------------------------: 03 ://
-#undef  ERR  //:----------------------------------------: 04 ://
-#undef  LOG  //:----------------------------------------: 05 ://
-#undef  PAY  //:----------------------------------------: 06 ://
+#undef  U32  //:----------------------------------------: 02 ://
+#undef  I32  //:----------------------------------------: 03 ://
+#undef  CMD  //:----------------------------------------: 04 ://
+#undef  ERR  //:----------------------------------------: 05 ://
+#undef  LOG  //:----------------------------------------: 06 ://
+#undef  PAY  //:----------------------------------------: 07 ://
+#undef  EXT  //:----------------------------------------: 08 ://
 //:=============================================:MAIN_SECTION://
 //:UNIT_TEST_SECTION:========================================://
 #define I32  int32_t  /** GCC: <stdint.h>     **/     //: 01 ://
@@ -2507,9 +2536,27 @@
 #define U08  uint8_t  /** GCC: <stdint.h>     **/     //: 03 ://
 #define ERR aac2020_phexdum_Halt                      //: 04 ://
 #define A_4 ( 4 )     /** Arguments,4 of them **/     //: 05 ://
+#define E_U extern U32                                //: 06 ://
 
     U32
     AAC2020_PHEXDUM_UnitTest( U32 u32 )
+    {
+        if( aac2020_phexdum_UTC_ror >= 1 ){
+            /** Ignore Call. **/
+            printf("[IGNORED:AAC2020_PHEXDUM_UnitTest]\n");
+            fflush(stdout);
+        }else{
+            aac2020_phexdum_UTC_ror =( 1  );
+
+            E_U aac2020_phexdum_UnitTest( U32 );
+                aac2020_phexdum_UnitTest( u32 );
+        };;
+
+        return( 0x00 );
+    }
+    //: - - - - - - - - - - - - ---- - - - - - - - - - - - - ://
+    U32
+    aac2020_phexdum_UnitTest( U32 u32 )
     {
     #define U32_ARR_LEN ( 187 )
 
@@ -2708,4 +2755,5 @@
 #undef  U08  //:----------------------------------------: 03 ://
 #undef  ERR  //:----------------------------------------: 04 ://
 #undef  A_4  //:----------------------------------------: 05 ://
+#undef  E_U  //:----------------------------------------: 06 ://
 //:========================================:UNIT_TEST_SECTION://
