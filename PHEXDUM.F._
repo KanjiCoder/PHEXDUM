@@ -880,6 +880,76 @@
 //:==========================================================://
 //:||||||||||||||||||||||||||||||||||:FILE_READ_WRITE_SECTION://
 //:==========================================================://
+//:HELPER_FUNCTIONS_I_DIDNT_REALIZE_I_NEEDED:================://
+#define I32  int32_t /** GCC: <stdint.h> **/          //: 01 ://
+#define U32 uint32_t /** GCC: <stdint.h> **/          //: 02 ://
+#define U08  uint8_t /** GCC: <stdint.h> **/          //: 03 ://
+
+    void
+    AAC2020_PHEXDUM_u32_arr_CTO_u08_arr(
+        U32*        u32_arr  //:<--------------ARR_DAT
+    ,   I32         u32_len  //:<--------------ARR_LEN
+    ,   U08*             *BYREF_u08_arr //:<-- ARR_DAT
+    ,   I32              *BYREF_u08_len //:<-- ARR_LEN
+    )
+    {
+        //:input_checks:-------------------------------------://
+        assert( ((U32*)0) !=         u32_arr  ); //:INN_PUTS
+        assert( (      0) >=         u32_len  ); //:INN_PUTS
+        assert( ((U08*)0) !=   BYREF_u08_arr  ); //:OUT_PUTS
+        assert( ((I32*)0) !=   BYREF_u08_len  ); //:OUT_PUTS
+        assert( ((I32*)0) ==( *BYREF_u08_arr) ); //:OUT_PUTS
+        assert( ((I32*)0) ==( *BYREF_u08_len) ); //:OUT_PUTS
+        //:-------------------------------------:input_checks://
+        //:declare_and_allocate_vars:------------------------://
+
+            U08* u08_arr = calloc( u32_len*4 , sizeof( U08 ) );
+            I32  u08_len =       ( u32_len*4 );
+
+            /** ******************************************** **/
+            /** @VID_IID[ 0127 ]TIME[ 00:22:33 ]             **/
+            /** NOT hungerian notation.                      **/
+            /** u32_dex ==     index of a uint32 array.      **/
+            /** u32_m_i == max index of uint32 array         **/
+            /** ******************************************** **/
+
+            I32      u_d ;                 /** u32_dex       **/
+            I32  u32_m_i =( u32_len - 1 ); /** u32_m_i / m_i **/
+
+        //:------------------------:declare_and_allocate_vars://
+        //:CORE_LOGIC_OF_FUNCTION:===========================://
+        #define INN u32_arr
+        #define OUT u08_arr
+        for( u_d = 0 ; u_d <= u32_m_i ; u_d++ ){
+
+            /** ******************************************** ***
+            Network Byte Order:
+            [     0x01020304        ,        0x05060708     ]
+            [ 01 , 02 , 03 , 04     ,     05 , 06 , 07 , 07 ]
+            @VID_IID[ 0127 ]TIME[ 00:34:23 ]         
+            *** ******************************************** **/
+
+            OUT[ bas + 0 ]=( ( INN[ u_d*4 ] >> 24 ) & 0xFF );
+            OUT[ bas + 1 ]=( ( INN[ u_d*4 ] >> 16 ) & 0xFF );
+            OUT[ bas + 2 ]=( ( INN[ u_d*4 ] >>  8 ) & 0xFF );
+            OUT[ bas + 3 ]=( ( INN[ u_d*4 ] >>  0 ) & 0xFF );
+
+        };;
+        #undef  INN
+        #undef  OUT
+        //:===========================:CORE_LOGIC_OF_FUNCTION://
+        //:return_via_output_params:-------------------------://
+
+            (*BYREF_u08_arr)=( u08_arr );
+            (*BYREF_u08_len)=( u08_len );
+
+        //:-------------------------:return_via_output_params://
+    }
+
+#undef  I32  //:----------------------------------------: 01 ://
+#undef  U32  //:----------------------------------------: 02 ://
+#undef  U08  //:----------------------------------------: 03 ://
+//:================:HELPER_FUNCTIONS_I_DIDNT_REALIZE_I_NEEDED://
 //:PRIVATE_API_HELPER_FUNCTIONS:=============================://
 #define I32    int32_t /** GCC: <stdint.h> **/        //: 01 ://
 #define U32   uint32_t /** GCC: <stdint.h> **/        //: 02 ://
@@ -2366,11 +2436,14 @@
         , 0x454E44AE,0x42608200
         };;
 
-        U08* u08_arr ; //:<-- pngfile 
-        I32  u08_len ; //:<-- pngfile.length
+        //:save_hard_coded_data_as_png_file:-----------------://
 
-            
-            #error TODO: Write This Function Below
+            //:001: Declare_PNG_Byte_Array:..................://
+
+            U08* u08_arr =((U08*)0); //:<-- pngfile 
+            I32  u08_len =(      0); //:<-- pngfile.length
+    
+            //:002: Unpack_Into_Byte_Array:..................://
 
             AAC2020_PHEXDUM_u32_arr_CTO_u08_arr(
                             u32_arr 
@@ -2378,48 +2451,54 @@
             ,                         &(u08_len)
             );;
 
+            //:003: Save_PNG_Bytes_To_Png_File:..............://
 
+            AAC2020_PHEXDUM_SaveFile_PNG(
+                "UTC.PNG"    /** NameOfFile__WithEXtension   **/
+            ,    u08_arr     //:[  arr_u08  / u08_arr  ]://
+            ,    u08_len     //:[  arr_len  / len_arr  ]://
+            ){
 
-        AAC2020_PHEXDUM_SaveFile_PNG(
-            "UTC.PNG"    /** NameOfFile__WithEXtension   ....**/
-        ,    u08_arr     //:[  arr_u08  / u08_arr  ]://
-        ,    u08_len     //:[  arr_len  / len_arr  ]://
-        ){
+        //:-----------------:save_hard_coded_data_as_png_file://
+        //:convert_png_on_disk_to_text_hex_dump:-------------://
 
-        #define ARG_COU ( 4 )
-        char* arg_arr_001[ ARG_COU ]={
-            "[IGNORE_FIRST_ARG_NOT_USER_SUPPLIED]"
-        ,   "png_cto_nak"
-        ,   "UTC.PNG"
-        ,   "UTC.TXT"
-        };;
-        #undef  ARG_COU
-        AAC2020_PHEXDUM_StandAloneMain(
-            ARG_COU
-        ,   arg_arr_001
-        );;
+            #define ARG_COU ( 4 )
+            char* arg_arr_001[ ARG_COU ]={
+                "[IGNORE_FIRST_ARG_NOT_USER_SUPPLIED]"
+            ,   "png_cto_nak"
+            ,   "UTC.PNG"
+            ,   "UTC.TXT"
+            };;
+            #undef  ARG_COU
+            AAC2020_PHEXDUM_StandAloneMain(
+                ARG_COU
+            ,   arg_arr_001
+            );;
 
-        #error : TODO: Delete "UTC.PNG" here.
-
-        #define ARG_COU ( 4 )
-        char* arg_arr_002[ ARG_COU ]={
-            "[IGNORE_FIRST_ARG_NOT_USER_SUPPLIED]"
-        ,   "nak_cto_png"
-        ,   "UTC.TXT"
-        ,   "UTC.PNG"
-        };;
-        #undef  ARG_COU
-        AAC2020_PHEXDUM_StandAloneMain(
-            ARG_COU
-        ,   arg_arr_002
-        );;
-
-        #error 1: LoadFileIntoMemory
-        #error 2: Convert u08 memory into u32 memory
-        #error 3: Compare u08 memory with original array
-                  declared in top of test.
-
-
+        //:-------------:convert_png_on_disk_to_text_hex_dump://
+        
+    ////
+    ////    #error : TODO: Delete "UTC.PNG" here.
+    ////
+    ////    #define ARG_COU ( 4 )
+    ////    char* arg_arr_002[ ARG_COU ]={
+    ////        "[IGNORE_FIRST_ARG_NOT_USER_SUPPLIED]"
+    ////    ,   "nak_cto_png"
+    ////    ,   "UTC.TXT"
+    ////    ,   "UTC.PNG"
+    ////    };;
+    ////    #undef  ARG_COU
+    ////    AAC2020_PHEXDUM_StandAloneMain(
+    ////        ARG_COU
+    ////    ,   arg_arr_002
+    ////    );;
+    ////
+    ////    #error 1: LoadFileIntoMemory
+    ////    #error 2: Convert u08 memory into u32 memory
+    ////    #error 3: Compare u08 memory with original array
+    ////              declared in top of test.
+    ////
+    ////
 
         return( 0x00 );
     }
