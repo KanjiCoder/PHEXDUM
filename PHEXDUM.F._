@@ -1364,6 +1364,8 @@
     ,   CHR*             *BYREF_nak_tex
     ,   I32              *BYREF_nak_len
 
+    ,   I32              *BYREF_nol_u32 
+                /** AKA: *BYREF_nof_hel **/
     )
     {
     #define HEL_LEN ( 10 ) /** 0xFF00FF00 **/         //: 01 ://
@@ -1403,6 +1405,7 @@
 
             I32 nof_hel =( 0 ); /** NumberOf:HEx_Literals    **/
                                 /** 32bit hex literals.      **/
+                                /** AKA[ nol_u32 ]           **/
                                                              
             I32 u08_dex =( 0 ); /** u08_arr[ u08_dex ]       **/
                                 /** AKA: arr_dex             **/
@@ -1428,6 +1431,7 @@
                                         /** **************** **/
                 CHR* nak_tex=((CHR*)0); /** **************** **/
                 I32  nak_len=(   0   ); /** **************** **/
+                I32  nol_u32=(   0   ); /** **************** **/
                                         /** **************** **/
             /** ******************************************** **/
 
@@ -1444,8 +1448,17 @@
             /** arr_len : u08_arr's length **/
 
             nof_hel =( arr_len / 4 );
+            nol_u32 =( arr_len / 4 );
             if( (4*nof_hel) < arr_len ){
                    nof_hel++ ;
+                   nol_u32++ ;
+            };;
+        
+            /** Synonyms for each other. **/
+            if( nof_hel != nol_u32 ){
+                /** @VID_IID[ 0128 ]TIME[ 02:44:32 ]         **/
+                /** A bit hackish. But just get it working.  **/
+                ERR("[MUST_MATCH_EXACTLY:nof_hel:AND:nol_u32]");
             };;
 
             /** ******************************************** **/
@@ -1542,6 +1555,7 @@
 
             (*BYREF_nak_tex)=( nak_tex );
             (*BYREF_nak_len)=( nak_len );
+            (*BYREF_nol_u32)=( nol_u32 );
 
         //:------------------------:return_via_output_params://
 
@@ -1598,6 +1612,11 @@
     )
     {   if(N_S==rel_str_pngfile){ERR("[NILSTR_001]"); };
 
+        /**:CTRL_F_HELP:++++++++++++++++++++++++++++++++++++:***
+        [ png_cto_nak | png_to_nak | png-to-nak | png-cto-nak ]
+        [ pngfile_CTO_naktext | pngfile_to_naktext ]
+        [ pngfile-cto-naktext | pngfile-to-naktext ]
+        ***:++++++++++++++++++++++++++++++++++++:CTRL_F_HELP:**/
         //:declare_variables:--------------------------------://
         #define PNGFILE AAC2020_PHEXDUM_P_T_PNGFILE
 
@@ -1624,6 +1643,8 @@
 
             CHR* nak_tex = ((CHR*)0);
             I32  nak_len = (   0   );
+
+            I32  nol_u32 = (   0   );
 
         #undef PNGFILE
         //:--------------------------------:declare_variables://
@@ -1687,6 +1708,7 @@
             ,               arr_len
             ,             &(nak_tex)
             ,             &(nak_len)
+            ,             &(nol_u32) /** num_lit / noe_u32 **/
             );;
 
         //:--------------:Stringify_U08_Array_As_U32_Hex_Dump://
@@ -1706,10 +1728,11 @@
         #define ANYTEXT AAC2020_PHEXDUM_P_T_ANYTEXT
         #define NAKTEXT ( naktext -> anytext ) 
         
-        naktext -> bin_txt =(       ( ANYTEXT )  );
-        naktext -> anytext =(       ( nak_tex )  );
-        naktext -> pngfile =(       ( (U08*)0 )  );
-        naktext -> arr_len =( strlen( NAKTEXT )  );
+        naktext -> bin_txt         =(       ( ANYTEXT )  );
+        naktext -> anytext         =(       ( nak_tex )  );
+        naktext -> pngfile         =(       ( (U08*)0 )  );
+        naktext -> arr_len         =( strlen( NAKTEXT )  );
+        naktext -> anytext_nol_u32 =(       ( nol_u32 )  );
 
         #undef  ANYTEXT
         #undef  NAKTEXT
@@ -1874,7 +1897,16 @@
         #define ANYTEXT AAC2020_PHEXDUM_P_T_ANYTEXT
         
         c99text -> bin_txt =( ANYTEXT );
-        c99text -> anytext =( CFS("[TODO:png_CTO_c99]\n\0" ) );
+        c99text -> anytext =( 
+
+            /** *********************************** **/
+            /** @VID_IID[ 0128 ]TIME[ 00:21:23 ]    **/
+            /** The fastest code is the code you do **/
+            /** NOT write.  @_WONT_DO_@             **/
+            /** *********************************** **/
+            CFS("[@_WONT_DO_@::::png_CTO_c99]\n\0" ) 
+        );;
+
         c99text -> pngfile =((U08*)0);
         c99text -> arr_len =( strlen( c99text -> anytext   ) );
 
@@ -1896,15 +1928,20 @@
         //:--------------------------------:declare_variables://
         //:CORE_FUNCTION_WORK:-------------------------------://
 
-            ERR("[TODO:CORE_FUNCTION_WORK:AAC2020_PHEXDUM_CMD_c99text_CTO_pngfile]");
+            //: @_WONT_DO_@                      ://
+            //: @VID_IID[ 0128 ]TIME[ 00:29:03 ] ://
 
         //:-------------------------------:CORE_FUNCTION_WORK://
         //:Fill_Output_Params:-------------------------------://
         #define PNGFILE AAC2020_PHEXDUM_P_T_PNGFILE
-        #define TODOMSG "[TODO:c99_CTO_png]\n\0"
+        #define TODOMSG "[@_WONT_DO_@:c99_CTO_png]\n\0"
 
-        pngfile_arr=(  (U08*)( CFS( TODOMSG ) )     ); //:<<<<<<<<<<<<<<< TEMP
-        pngfile_len=(  strlen( (CHR*)pngfile_arr )  ); //:<<<<<<<<<<<<<<<< TEMP
+        //|__________________________________________________|//
+        //| If you ever decide to implement this function,   |//
+        //| get rid of these two lines.                      |//
+        pngfile_arr=(  (U08*)( CFS( TODOMSG ) )     );  //:<--01
+        pngfile_len=(  strlen( (CHR*)pngfile_arr )  );  //:<--02
+        //|__________________________________________________|//
 
         pngfile -> bin_txt =( PNGFILE           );
         pngfile -> anytext =( (CHR*)0           );
@@ -1958,6 +1995,53 @@
     #undef NO_FIND
     }
     //: - - - - - - - - - - - - ---- - - - - - - - - - - - - ://
+    //:BOGUS_COMMANDS_I_WILL_NEVER_SUPPORT:------------------://
+
+        void
+        AAC2020_PHEXDUM_CMD_naktext_CTO_c99text( 
+            C_C*    rel_str_naktext,PAY*c99text  
+        )
+        {   if(N_S==rel_str_naktext){ERR("[NILSTR_1007AM]");};
+
+            //:Fill_Output_Params:---------------------------://
+            #define ANYTEXT AAC2020_PHEXDUM_P_T_ANYTEXT
+            
+            c99text -> bin_txt =( ANYTEXT );
+            c99text -> anytext =( 
+                /** @VID_IID[ 0128 ]TIME[ 00:46:52 ] **/
+                CFS("[BOGUS_FUNCTION:naktext_CTO_c99text]\n\0" ) 
+            );;
+
+            c99text -> pngfile =((U08*)0);
+            c99text -> arr_len =( strlen( c99text -> anytext ));
+
+            #undef  ANYTEXT
+            //:---------------------------:Fill_Output_Params://
+        }
+        //: - - - - - - - - - - - -- - - - - - - - - - - - - ://
+        void
+        AAC2020_PHEXDUM_CMD_c99text_CTO_naktext( 
+            C_C*    rel_str_c99text,PAY*naktext  
+        )
+        {   if(N_S==rel_str_c99text){ERR("[NILSTR_1007AM]");};
+
+            //:Fill_Output_Params:---------------------------://
+            #define ANYTEXT AAC2020_PHEXDUM_P_T_ANYTEXT
+            
+            naktext -> bin_txt =( ANYTEXT );
+            naktext -> anytext =( 
+                /** @VID_IID[ 0128 ]TIME[ 00:46:52 ] **/
+                CFS("[BOGUS_FUNCTION:c99text_CTO_naktext]\n\0" ) 
+            );;
+
+            naktext -> pngfile =((U08*)0);
+            naktext -> arr_len =( strlen( naktext -> anytext ));
+
+            #undef  ANYTEXT
+            //:---------------------------:Fill_Output_Params://
+        }
+
+    //:------------------:BOGUS_COMMANDS_I_WILL_NEVER_SUPPORT://
 
 //: - - - - - - - - - - - - - ---- - - - - - - - - - - - - - ://
 #undef  I32  //:----------------------------------------: 01 ://
@@ -1998,6 +2082,9 @@
     ,          CHR* cmdenum_ORR_cmdfunc
     )
     {
+    #define     NUMBER_OF_COMMANDS ( 6 )
+    #define NOC NUMBER_OF_COMMANDS
+
         LOG("[...cmdname_CTO_cmdenum_ORR_cmdfunc:BEG]",0);
 
         //:declare_variables:--------------------------------://
@@ -2005,9 +2092,9 @@
         I32   cmdenum =(      0   ); /** Command Enum     **/
         CMD*  cmdfunc =&(AAC2020_PHEXDUM_CMD_NothingFound ) ;
 
-        CHR** syn_syn[ 5 ]={ 0 }; /** TAB:FUNCTION: Synonyms **/
-        I32   tab_enu[ 5 ]={ 0 }; /** TAB:FUNCTION: Enums    **/
-        CMD*  tab_fun[ 5 ]={ 0 }; /** TAB:FUNCTION: Funcs    **/
+        CHR** syn_syn[ NOC+1 ]={ 0 }; /** TAB:FUNCS:Synonyms **/
+        I32   tab_enu[ NOC+1 ]={ 0 }; /** TAB:FUNCS:Enums    **/
+        CMD*  tab_fun[ NOC+1 ]={ 0 }; /** TAB:FUNCS:Funcs    **/
         
         CHR** tab_syn     =((CHR**)0);
 
@@ -2019,34 +2106,42 @@
         //:populate_tables:----------------------------------://
 
         syn_syn[ 0 ]=(aac2020_phexdum_SYN_invalid_command     );
-        syn_syn[ 1 ]=(aac2020_phexdum_SYN_pngfile_CTO_c99text );
-        syn_syn[ 2 ]=(aac2020_phexdum_SYN_c99text_CTO_pngfile );
-        syn_syn[ 3 ]=(aac2020_phexdum_SYN_pngfile_CTO_naktext );
-        syn_syn[ 4 ]=(aac2020_phexdum_SYN_naktext_CTO_pngfile );
+        syn_syn[ 1 ]=(aac2020_phexdum_SYN_naktext_CTO_c99text );
+        syn_syn[ 2 ]=(aac2020_phexdum_SYN_c99text_CTO_naktext );
+        syn_syn[ 3 ]=(aac2020_phexdum_SYN_pngfile_CTO_c99text );
+        syn_syn[ 4 ]=(aac2020_phexdum_SYN_c99text_CTO_pngfile );
+        syn_syn[ 5 ]=(aac2020_phexdum_SYN_pngfile_CTO_naktext );
+        syn_syn[ 6 ]=(aac2020_phexdum_SYN_naktext_CTO_pngfile );
 
         /** tab_enu == ....... **/
         tab_enu[ 0 ]=( 0 ); /** 0 == invalid enum **/
-        tab_enu[ 1 ]=(aac2020_phexdum_ENU_pngfile_CTO_c99text );
-        tab_enu[ 2 ]=(aac2020_phexdum_ENU_c99text_CTO_pngfile );
-        tab_enu[ 3 ]=(aac2020_phexdum_ENU_pngfile_CTO_naktext );
-        tab_enu[ 4 ]=(aac2020_phexdum_ENU_naktext_CTO_pngfile );
+        tab_enu[ 1 ]=(aac2020_phexdum_ENU_naktext_CTO_c99text );
+        tab_enu[ 2 ]=(aac2020_phexdum_ENU_c99text_CTO_naktext );
+        tab_enu[ 3 ]=(aac2020_phexdum_ENU_pngfile_CTO_c99text );
+        tab_enu[ 4 ]=(aac2020_phexdum_ENU_c99text_CTO_pngfile );
+        tab_enu[ 5 ]=(aac2020_phexdum_ENU_pngfile_CTO_naktext );
+        tab_enu[ 6 ]=(aac2020_phexdum_ENU_naktext_CTO_pngfile );
 
         /** tab_fun === cmdjump **/
         tab_fun[ 0 ]=(AAC2020_PHEXDUM_CMD_NothingFound        );
-        tab_fun[ 1 ]=(AAC2020_PHEXDUM_CMD_pngfile_CTO_c99text );
-        tab_fun[ 2 ]=(AAC2020_PHEXDUM_CMD_c99text_CTO_pngfile );
-        tab_fun[ 3 ]=(AAC2020_PHEXDUM_CMD_pngfile_CTO_naktext );
-        tab_fun[ 4 ]=(AAC2020_PHEXDUM_CMD_naktext_CTO_pngfile );
+        tab_fun[ 1 ]=(AAC2020_PHEXDUM_CMD_naktext_CTO_c99text );
+        tab_fun[ 2 ]=(AAC2020_PHEXDUM_CMD_c99text_CTO_naktext );
+        tab_fun[ 3 ]=(AAC2020_PHEXDUM_CMD_pngfile_CTO_c99text );
+        tab_fun[ 4 ]=(AAC2020_PHEXDUM_CMD_c99text_CTO_pngfile );
+        tab_fun[ 5 ]=(AAC2020_PHEXDUM_CMD_pngfile_CTO_naktext );
+        tab_fun[ 6 ]=(AAC2020_PHEXDUM_CMD_naktext_CTO_pngfile );
 
         if( 0 != tab_enu[ 0 ] ){ ERR("[ENU_MAP_ERR:000]"); };
         if( 1 != tab_enu[ 1 ] ){ ERR("[ENU_MAP_ERR:001]"); };
         if( 2 != tab_enu[ 2 ] ){ ERR("[ENU_MAP_ERR:002]"); };
         if( 3 != tab_enu[ 3 ] ){ ERR("[ENU_MAP_ERR:003]"); };
         if( 4 != tab_enu[ 4 ] ){ ERR("[ENU_MAP_ERR:004]"); };
+        if( 5 != tab_enu[ 5 ] ){ ERR("[ENU_MAP_ERR:005]"); };
+        if( 6 != tab_enu[ 6 ] ){ ERR("[ENU_MAP_ERR:006]"); };
 
         //:----------------------------------:populate_tables://
         //:find_the_command:---------------------------------://
-        for( I32 cmd = 4 ; cmd >= 0 ; cmd -- ){
+        for( I32 cmd = NUMBER_OF_COMMANDS ; cmd >= 0 ; cmd -- ){
 
             /** ******************************************** **/
             /** @VID_IID[0120]TIME[ 01:17:02 ] ************* **/
@@ -2132,6 +2227,9 @@
         
         #undef  S_C
         //:------------------:return_enum_or_function_pointer://
+
+    #undef  NUMBER_OF_COMMANDS
+    #undef                 NOC
     }
     //: - - - - - - - - - - - - ---- - - - - - - - - - - - - ://
     I32
@@ -2205,6 +2303,7 @@
             /** Inputs And Outputs For Command Line **/
 
             CHR* cmdname ; /** cmd: Command To Execute ......**/
+            CHR* fip_004 ; /** File Path Out: Length File ...**/
             CHR* fip_inn ; /** File Path Inn  ...............**/
             CHR* fip_out ; /** File Path Out  ...............**/
             CHR* tex_out ; /** Output text    ...............**/
@@ -2233,8 +2332,16 @@
         //:-------------------------------------:declare_vars://
         //:default_values:-----------------------------------://
 
+            /** ******************************************** **/
+            /** @VID_IID[ 0128 ]T[ 01:41:23 ]WHY[ fip_004 ]  **/
+            /** @VID_IID[ 0128 ]T[ 01:43:23 ]WHY[ fip_004 ]  **/
+            /** fip_txt_out, EXAMPLE: "naked_array.txt.len._"**/
+            /**     fip_004, EXAMPLE: "naked_array.txt.len._"**/
+            /** ******************************************** **/
+            fip_004 =( AAC2020_PHEXDUM_DEFAULT_fip_004 );
+                                                       
             fip_out =( AAC2020_PHEXDUM_DEFAULT_fip_out );
-
+                                                       
             tex_out =( AAC2020_PHEXDUM_DEFAULT_tex_out );
             fid_out =( AAC2020_PHEXDUM_DEFAULT_fid_out );
 
@@ -2261,32 +2368,63 @@
         if( 0
         ||  2 == (arg_cou - 1) /** 2 user arguments **/
         ||  3 == (arg_cou - 1) /** 3 user arguments **/
+        ||  4 == (arg_cou - 1) /** 4 user arguments **/
         ){  
 
             cmdname =( arg_arr[ 1 ] ); /** command      **/
             fip_inn =( arg_arr[ 2 ] ); /** FIlePath:INN **/
             
+            //:LOAD_OPTIONAL_ARGUMENTS:======================://
 
-            if( ( arg_cou - 1 ) >=  3 ){
-            #define STR_CMP aac2020_phexdum_StrCmp
-                fip_out =( arg_arr[ 3 ] );
+                //:ARG_3:OUTPUT_FILE_FOR_DATA:===============://
+                #define ARG_003 ( 3 )
 
-                /** rbsrbs: my_stricmp Kappa **/
-                if( 0 == STR_CMP( fip_inn , fip_out ) ){
+                    if( ( arg_cou - 1 ) >=  ARG_003 ){
+                    #define STR_CMP aac2020_phexdum_StrCmp
+                        fip_out =( arg_arr[ ARG_003 ] );
 
-                    /** ************************************ **/
-                    /** Really we could just exit. But that  **/
-                    /** to me implies a fatal error rather   **/
-                    /** than an error that should be         **/
-                    /** gracefully recovered from.           **/
-                    /** ************************************ **/
-                    printf( "[FILE_NAMES_MATCH]\n" );
-                    fflush(stdout);
-                    return( 1 );
-                };;
-            #undef  STR_CMP
-            };;
+                        /** rbsrbs: my_stricmp Kappa **/
+                        if( 0 == STR_CMP( fip_inn , fip_out ) ){
 
+                            //:#_PHEXDUM_RETURN_NOT_EXIT_#://
+                            printf( "[FILE_NAMES_MATCH:001]\n");
+                            fflush(stdout);
+                            return( 1 );
+                        };;
+                    #undef  STR_CMP
+                    };;
+
+                #undef  ARG_003
+                //:===============:ARG_3:OUTPUT_FILE_FOR_DATA://
+                //:ARG_4:LENGTH_OF_DATA_NUMBER_IN_FILE:======://
+                #define ARG_004 ( 4 ) //////////////////////////
+
+                /** @VID_IID[ 0128 ]TIME[ 01:30:23 ] ******* **/
+                /** EXAMPLE: "naked_array.txt.len._"  ****** **/
+
+                    if( ( arg_cou - 1 ) >=  ARG_004 ){
+                    #define SCI aac2020_phexdum_StrCmp
+    
+                        /** EXAMPLE: "naked_array.txt.len._" **/
+                        /** fip_004 , aka: fip_txt_out       **/
+                        fip_004 =( arg_arr[ ARG_004 ] );
+
+                        /** rbsrbs: my_stricmp Kappa **/
+                        if( 0
+                        ||  0 == SCI( fip_inn , fip_004 ) 
+                        ||  0 == SCI( fip_out , fip_004 ) 
+                        ){
+                            //:#_PHEXDUM_RETURN_NOT_EXIT_#://
+                            printf( "[FILE_NAMES_MATCH:002]\n");
+                            fflush(stdout);
+                            return( 1 );
+                        };;
+                    #undef  SCI
+                    };;
+
+                #undef  ARG_004  ///////////////////////////////
+                //:======:ARG_4:LENGTH_OF_DATA_NUMBER_IN_FILE://
+            //:======================:LOAD_OPTIONAL_ARGUMENTS://
             //:call_function_from_jump_table:================://
             #define JMP cmdjump
 
@@ -2298,18 +2436,29 @@
                                       cmdname ));;
 
             LOG("[ABOUT_TO_POPULATE_JUMP_TABLE]",0);
-            assert( cmdenum >= 0 && cmdenum <= 4 );
+            if( cmdenum >= 0 && cmdenum <= 6 ){
+                /** Okay Do nothing. **/
+            }else{  
+                /** **************************************** **/
+                /** You probably forgot to add new functions **/
+                /** to the jump table (JMP) @VID_IID[ 0128 ] **/
+                /** TIME[ 01:18:00 ] ----------------------- **/
+                /** **************************************** **/
+                ERR("[PROBABLY_FORGOT_TO_ADD_NEW_FUNCTIONS]");
+            };;
             JMP[ 0 ]=(AAC2020_PHEXDUM_CMD_NothingFound        );
-            JMP[ 1 ]=(AAC2020_PHEXDUM_CMD_pngfile_CTO_c99text );
-            JMP[ 2 ]=(AAC2020_PHEXDUM_CMD_c99text_CTO_pngfile );
-            JMP[ 3 ]=(AAC2020_PHEXDUM_CMD_pngfile_CTO_naktext );
-            JMP[ 4 ]=(AAC2020_PHEXDUM_CMD_naktext_CTO_pngfile );
+            JMP[ 1 ]=(AAC2020_PHEXDUM_CMD_naktext_CTO_c99text );
+            JMP[ 2 ]=(AAC2020_PHEXDUM_CMD_c99text_CTO_naktext );
+            JMP[ 3 ]=(AAC2020_PHEXDUM_CMD_pngfile_CTO_c99text );
+            JMP[ 4 ]=(AAC2020_PHEXDUM_CMD_c99text_CTO_pngfile );
+            JMP[ 5 ]=(AAC2020_PHEXDUM_CMD_pngfile_CTO_naktext );
+            JMP[ 6 ]=(AAC2020_PHEXDUM_CMD_naktext_CTO_pngfile );
       
             /** Execute proper function **/
             
             if( 1
-            &&  cmdenum >= 0
-            &&  cmdenum <= 4 
+            &&  cmdenum >= 0 //:LOWEST::COMMAND_ENUMERATION
+            &&  cmdenum <= 6 //:HIGHEST:COMMAND_ENUMERATION
             ){
                 if( ((CMD*)0)==cmdfunc ){
 
@@ -2369,7 +2518,8 @@
 
         }else{
 
-            tex_out =( AAC2020_PHEXDUM_DEFAULT_tex_out );
+            //: AAC2020_PHEXDUM_DEFAULT_tex_out
+            tex_out =( "[IGNORED:TOO_MANY_CMDLINE_ARGUMENTS]" );
 
         };;
 
@@ -2460,7 +2610,40 @@
                 #undef H //:---------------------------------://
                 //:---------------:save_file_to_disk_for_real://
             };;
+            //:save__anytext_nol_u32:------------------------://
+            #define ANYTEXT AAC2020_PHEXDUM_P_T_ANYTEXT
+            if( ANYTEXT == payload.bin_txt ){
 
+                /** **************************************** **/
+                /** @VID_IID[ 0128 ]TIME[ 02:37:08 ]         **/
+                /** Added ability to save a file telling us  **/
+                /** how many hex literals are in the naked   **/
+                /** text array. Which is needed for using    **/
+                /** data embedded by our build system when   **/
+                /** build system is using PHEXDUM commands.  **/
+                /** **************************************** **/
+
+                I32   nol_u32 =(I32)( payload.anytext_nol_u32 );
+                char  buf[16]={ 0 }; //:16 character buffer
+                I32   rad    =(10 ); //:radix: base 10, decimal
+
+                /** Convert nol_u32 to ascii, save in[ buf ] **/
+                itoa( nol_u32 , buf , rad ) ;
+                
+                /** Setup arguments for function call. **/
+                fip_out=(   fip_004  );
+                fid_out=(       buf  );
+                fid_nob=(strlen(buf) );
+
+                AAC2020_PHEXDUM_SaveFile_TXT( 
+                    fip_out //:<--[ NameOfFile( nof_wex )  ]
+                ,   fid_out //:<--[ Text To Save To File   ]
+                ,   fid_nob //:<--[ Length_Of_Text         ]
+                );;
+                
+            };;
+            #undef  ANYTEXT
+            //:------------------------:save__anytext_nol_u32://
         LOG("[save_text_to_output_file:END]",0);
         #undef  N_S
         //:=========================:save_text_to_output_file://

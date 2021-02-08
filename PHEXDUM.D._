@@ -60,11 +60,14 @@
 
 //:Public to command line:
 
-    1. pngfile_CTO_c99text   CMD$>> PHEXDUM png-to-c99 fil.PNG
-    2. c99text_CTO_pngfile   CMD$>> PHEXDUM c99-to-png c99.TXT
+    1. naktext_CTO_c99text   CMD$>> PHEXDUM nak-to-c99 c99.TXT
+    2. c99text_CTO_naktext   CMD$>> PHEXDUM c99-to-nak nak.TXT
 
-    3. pngfile_CTO_naktext   CMD$>> PHEXDUM png-to-nak fil.PNG
-    4. naktext_CTO_pngfile   CMD$>> PHEXDUM nak-to-png c99.TXT
+    3. pngfile_CTO_c99text   CMD$>> PHEXDUM png-to-c99 nak.PNG
+    4. c99text_CTO_pngfile   CMD$>> PHEXDUM c99-to-png c99.TXT
+
+    5. pngfile_CTO_naktext   CMD$>> PHEXDUM png-to-nak nak.PNG
+    6. naktext_CTO_pngfile   CMD$>> PHEXDUM nak-to-png c99.TXT
 
 //:Public to AAC2020 engine:
 
@@ -86,10 +89,16 @@
     /** max number of synonyms **/
     #define AAC2020_PHEXDUM_SYN_NOE ( 11 )
 
+    /** Default Length Variable Output.   - - - - - - - - - -**/
+    /** Example: "naked_array.txt.len._"  - - - - - - - - - -**/
+
+        CHR* AAC2020_PHEXDUM_DEFAULT_fip_004 =(
+            "anytext_nol_u32._\0"                );
+
     /** Default [fi]le p[path] [out]put - - - - - - - - - - -**/
 
         CHR* AAC2020_PHEXDUM_DEFAULT_fip_out =( 
-            "PNG_ORR_TXT.___\0" );
+            "PNG_ORR_TXT.___\0"                );
 
     /** Default Text Output - - - - - - - - - - - - - - - - -**/
 
@@ -146,6 +155,13 @@
 
             I32  arr_len ;
 
+        /** Number of uint32 elements encoded by the anytext **/
+        /** Variable only valid if[ bin_txt == ANYTEXT ] *** **/
+        /** AKA[ anytext_noe_u32 / anytext_num_lit ]     *** **/
+        /** nol_u32: Number Of Literals: Format: Uint32  *** **/
+
+            I32  anytext_nol_u32 ; /** AKA[ nof_hel ]*** *** **/
+
     #undef PAY_TYP
     };
                                           
@@ -183,8 +199,12 @@
 #define C_C const char                 //:--------------: 04 ://
 #define E_V extern void                //:--------------: 05 ://
 
+    E_V AAC2020_PHEXDUM_CMD_naktext_CTO_c99text( C_C* , PAY* );
+    E_V AAC2020_PHEXDUM_CMD_c99text_CTO_naktext( C_C* , PAY* );
+
     E_V AAC2020_PHEXDUM_CMD_pngfile_CTO_c99text( C_C* , PAY* );
     E_V AAC2020_PHEXDUM_CMD_c99text_CTO_pngfile( C_C* , PAY* );
+
     E_V AAC2020_PHEXDUM_CMD_pngfile_CTO_naktext( C_C* , PAY* );
     E_V AAC2020_PHEXDUM_CMD_naktext_CTO_pngfile( C_C* , PAY* );
                                                  
@@ -199,10 +219,17 @@
 //:COMMAND_ENUMERATIONS:=====================================://
 #define I32 int32_t /** GCC: <stdint.h> **/
 
-    I32 aac2020_phexdum_ENU_pngfile_CTO_c99text =( 1 );
-    I32 aac2020_phexdum_ENU_c99text_CTO_pngfile =( 2 );
-    I32 aac2020_phexdum_ENU_pngfile_CTO_naktext =( 3 );
-    I32 aac2020_phexdum_ENU_naktext_CTO_pngfile =( 4 );
+    //:BOGUS COMMANDS:
+    I32 aac2020_phexdum_ENU_naktext_CTO_c99text =( 1 );
+    I32 aac2020_phexdum_ENU_c99text_CTO_naktext =( 2 );
+
+    //:DECIDED NOT TO IMPLEMENT:
+    I32 aac2020_phexdum_ENU_pngfile_CTO_c99text =( 3 );
+    I32 aac2020_phexdum_ENU_c99text_CTO_pngfile =( 4 );
+
+    //:ONLY COMMANDS I CARE ABOUT:
+    I32 aac2020_phexdum_ENU_pngfile_CTO_naktext =( 5 );
+    I32 aac2020_phexdum_ENU_naktext_CTO_pngfile =( 6 );
 
 #undef  I32
 //:=====================================:COMMAND_ENUMERATIONS://
@@ -210,17 +237,22 @@
 //:SYN____FOR____SYNONYM_TABLE:==============================://
 #define CHR        const char                         //: 01 ://
 #define ECC extern const char                         //: 02 ://
-#define NOE AAC2020_PHEXDUM_SYN_NOE                                   //: 03 ://
+#define NOE AAC2020_PHEXDUM_SYN_NOE                   //: 03 ://
 
     //: - - - - - - - - - - - - ---- - - - - - - - - - - - - ://
     //: CHR**  type(s):--------------------------------------://
+
+    ECC*  aac2020_phexdum_SYN_naktext_CTO_c99text[ NOE + 1  ] ;
+    ECC*  aac2020_phexdum_SYN_c99text_CTO_naktext[ NOE + 1  ] ;
+
     ECC*  aac2020_phexdum_SYN_pngfile_CTO_c99text[ NOE + 1  ] ;
     ECC*  aac2020_phexdum_SYN_c99text_CTO_pngfile[ NOE + 1  ] ;
+
     ECC*  aac2020_phexdum_SYN_pngfile_CTO_naktext[ NOE + 1  ] ;
     ECC*  aac2020_phexdum_SYN_naktext_CTO_pngfile[ NOE + 1  ] ;
 
     //: CHR*** type(s): -------------------------------------://
-    extern CHR** aac2020_phexdum_SYN_SYN[ 5 ];
+    extern CHR** aac2020_phexdum_SYN_SYN[ 6 + 1 /** 7 **/ ];
     //: - - - - - - - - - - - - ---- - - - - - - - - - - - - ://
     CHR*            /** invalid_command **/
     aac2020_phexdum_SYN_invalid_command[ NOE + 1 ]={
@@ -302,14 +334,57 @@
     ,   ((CHR*)0) //:<--@VID_IID[ 0126 ]TIME[ 00:18:00 ]
     };            //:           [Null_Terminated_List__]
     //: - - - - - - - - - - - - ---- - - - - - - - - - - - - ://
-    CHR**
-    aac2020_phexdum_SYN_SYN[ 4 + 1 ]={
-    /**/( aac2020_phexdum_SYN_invalid_command )
+    //:COMMANDS_THAT_ARE_BOGUS:------------------------------://
 
-    ,   ( aac2020_phexdum_SYN_pngfile_CTO_c99text )
-    ,   ( aac2020_phexdum_SYN_c99text_CTO_pngfile )
-    ,   ( aac2020_phexdum_SYN_pngfile_CTO_naktext )
-    ,   ( aac2020_phexdum_SYN_naktext_CTO_pngfile )
+        CHR*            /** naktext_CTO_c99text **/
+        aac2020_phexdum_SYN_naktext_CTO_c99text[ NOE + 1  ]={
+        /**/"copyright_2021_atomic_alice_c_engine(AAC2020):005"
+        ,   "nak-to-c99"  
+        ,   "nak_to_c99" 
+        ,   "nak-TO-c99"  
+        ,   "nak_TO_c99" 
+        ,   "naktext-cto-c99text"
+        ,   "naktext_cto_c99text"
+        ,   "naktext-CTO-c99text"
+        ,   "naktext_CTO_c99text"
+        ,   "nak_cto_c99"
+        ,   "nak-cto-c99"
+        ,   ((CHR*)0)   //:<--[ NULL_TERMINATED_LIST ]
+        };   
+
+        CHR*            /** c99text_CTO_naktext **/
+        aac2020_phexdum_SYN_c99text_CTO_naktext[ NOE + 1  ]={
+        /**/"copyright_2021_atomic_alice_c_engine(AAC2020):006"
+        ,   "c99-to-nak"  
+        ,   "c99_to_nak" 
+        ,   "c99-TO-nak"  
+        ,   "c99_TO_nak" 
+        ,   "c99text-cto-naktext"
+        ,   "c99text_cto_naktext"
+        ,   "c99text-CTO-naktext"
+        ,   "c99text_CTO_naktext"
+        ,   "c99_cto_nak"
+        ,   "c99-cto-nak"
+        ,   ((CHR*)0)   //:<--[ NULL_TERMINATED_LIST ]
+        };             
+
+    //:------------------------------:COMMANDS_THAT_ARE_BOGUS://
+    //: - - - - - - - - - - - - ---- - - - - - - - - - - - - ://
+    CHR**
+    aac2020_phexdum_SYN_SYN[ 6 + 1 ]={
+    /**/( aac2020_phexdum_SYN_invalid_command )     //: +1
+
+        //:EXPLICITLY INVALID COMMANDS:
+    ,   ( aac2020_phexdum_SYN_naktext_CTO_c99text ) //: 01
+    ,   ( aac2020_phexdum_SYN_c99text_CTO_naktext ) //: 02
+
+        //:COMMANDS_IAM_NOT_GOING_TO_EVER_WRITE:
+    ,   ( aac2020_phexdum_SYN_pngfile_CTO_c99text ) //: 03
+    ,   ( aac2020_phexdum_SYN_c99text_CTO_pngfile ) //: 04
+
+        //:COMMANDS_I_ACTUALLY_CARE_ABOUT:
+    ,   ( aac2020_phexdum_SYN_pngfile_CTO_naktext ) //: 05
+    ,   ( aac2020_phexdum_SYN_naktext_CTO_pngfile ) //: 06
     };
     //: - - - - - - - - - - - - ---- - - - - - - - - - - - - ://
 
